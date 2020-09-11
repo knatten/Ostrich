@@ -18,5 +18,8 @@
     <ClCompile Include="Ostrich.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Cpu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

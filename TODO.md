@@ -1,6 +1,5 @@
 - sln -> CMake
 - Add tests
-- Split up module in smaller files
 - CI
   - Compilation
   - Tests

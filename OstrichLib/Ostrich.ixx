@@ -24,46 +24,16 @@ namespace ostrich
 
     export using Instruction = std::variant<Inc, Dec, Add>;
 
-    template <class... Ts> struct overloaded : Ts...
-    {
-        using Ts::operator()...;
-    };
-    template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
-
     export class Cpu
     {
     public:
-        void execute(Instruction instruction)
-        {
-            std::visit(overloaded{
-                       [this](const Inc &inc) { reg(inc.registerName)++; },
-                       [this](const Dec &dec) { reg(dec.registerName)--; },
-                       [this](const Add &add) { reg(add.destination) += reg(add.source); },
-                       },
-                       instruction);
-        }
-        uint64_t rax() const
-        {
-            return m_rax;
-        }
-        uint64_t rbx() const
-        {
-            return m_rbx;
-        }
+        void execute(const Instruction &instruction);
+        uint64_t rax() const;
+        uint64_t rbx() const;
 
     private:
-        uint64_t &reg(RegisterName r)
-        {
-            switch(r)
-            {
-                using enum RegisterName;
-            case rax:
-                return m_rax;
-            case rbx:
-                return m_rbx;
-            }
-            throw std::runtime_error("No such register");
-        }
+        uint64_t &reg(RegisterName r);
+
         uint64_t m_rax{ 0 };
         uint64_t m_rbx{ 0 };
     };
