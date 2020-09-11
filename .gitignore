@@ -1,0 +1,6 @@
+.vs
+Debug
+Release
+*.swp
+*.vcxproj.user
+*.ifc
