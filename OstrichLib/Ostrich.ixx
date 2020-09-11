@@ -4,10 +4,7 @@ import std.core;
 
 namespace ostrich
 {
-    export enum class RegisterName
-    {
-        rax, rbx
-    };
+    export enum class RegisterName { rax, rbx };
 
     export struct Inc
     {
@@ -19,7 +16,13 @@ namespace ostrich
         RegisterName registerName;
     };
 
-    export using Instruction = std::variant<Inc, Dec>;
+    export struct Add
+    {
+        RegisterName destination;
+        RegisterName source;
+    };
+
+    export using Instruction = std::variant<Inc, Dec, Add>;
 
     template <class... Ts> struct overloaded : Ts...
     {
@@ -32,8 +35,11 @@ namespace ostrich
     public:
         void execute(Instruction instruction)
         {
-            std::visit(overloaded{ [this](const Inc &inc) { reg(inc.registerName)++; },
-                                   [this](const Dec &dec) { reg(dec.registerName)--; } },
+            std::visit(overloaded{
+                       [this](const Inc &inc) { reg(inc.registerName)++; },
+                       [this](const Dec &dec) { reg(dec.registerName)--; },
+                       [this](const Add &add) { reg(add.destination) += reg(add.source); },
+                       },
                        instruction);
         }
         uint64_t rax() const
