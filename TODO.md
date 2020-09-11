@@ -1,0 +1,12 @@
+- sln -> CMake
+- Add tests
+- Split up module in smaller files
+- CI
+  - Compilation
+  - Tests
+  - Formatting
+  - clang-tidy
+  - ubsan
+  - tsan
+  - asan
+- Rename project from TestingModules to Ostrich
