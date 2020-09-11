@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\TestingModules\Ostrich.ixx">
+    <ClCompile Include="Ostrich.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
