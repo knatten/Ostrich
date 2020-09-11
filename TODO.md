@@ -1,3 +1,5 @@
+- Remove absolute paths from vcxprojs
+- Remove Win32 configurations
 - sln -> CMake
 - Add tests
 - CI
