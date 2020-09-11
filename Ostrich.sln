@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestingModules", "TestingModules\TestingModules.vcxproj", "{0C708077-15FA-43F8-B591-6D0F2BA9A161}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Demo", "Demo\Demo.vcxproj", "{0C708077-15FA-43F8-B591-6D0F2BA9A161}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OstrichLib", "OstrichLib\OstrichLib.vcxproj", "{9A81339A-AE1E-4F9C-8021-56F1A78B9B6D}"
 EndProject

@@ -8,4 +8,3 @@
   - ubsan
   - tsan
   - asan
-- Rename project from TestingModules to Ostrich
