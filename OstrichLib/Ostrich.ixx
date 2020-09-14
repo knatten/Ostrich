@@ -75,5 +75,17 @@ namespace ostrich
         Cpu m_cpu{ m_stack };
     };
 
-    export std::string visualize(const Vm &vm);
+    export class UI
+    {
+    public:
+        UI(size_t widht, size_t height, Vm &vm);
+        void render() const;
+
+    private:
+        void render_register(const std::string &name, uint64_t value, char *buf) const;
+
+        size_t m_width;
+        size_t m_height;
+        Vm &m_vm;
+    };
 } // namespace ostrich

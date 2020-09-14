@@ -8,6 +8,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OstrichLib", "OstrichLib\OstrichLib.vcxproj", "{9A81339A-AE1E-4F9C-8021-56F1A78B9B6D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestOstrichLib", "TestOstrichLib\TestOstrichLib.vcxproj", "{71926F31-6FDD-4A21-A08A-10BFD41184F7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9A81339A-AE1E-4F9C-8021-56F1A78B9B6D} = {9A81339A-AE1E-4F9C-8021-56F1A78B9B6D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

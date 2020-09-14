@@ -30,7 +30,7 @@ namespace ostrich
         {
             const uint8_t byte{ static_cast<uint8_t>(value >> i * 8) };
             const size_t index{ lsb_index - i };
-            m_content.at(index) = byte; //TODO bounds check at function level instead
+            m_content.at(index) = byte; // TODO bounds check at function level instead
         }
     }
 
@@ -97,17 +97,35 @@ namespace ostrich
         return m_stack;
     };
 
-    std::string visualize(const Vm &vm)
+    UI::UI(size_t width, size_t height, Vm &vm) : m_width(width), m_height(height), m_vm(vm)
+    {
+    }
+
+    void UI::render_register(const std::string &name, uint64_t value, char *buf) const
     {
         std::stringstream ss;
-        const Cpu &cpu = vm.cpu();
-        ss << "Registers: rax " << cpu.rax() << ", rbx " << cpu.rbx() << ", rsp " << cpu.rsp() << std::endl;
-        ss << "Stack    : ";
-        for(const auto &v : vm.stack().content())
+        ss << name << ": " << value;
+        std::string s = ss.str();
+        std::copy(s.c_str(), s.c_str() + s.size(), &(buf[0]) + static_cast<int>(m_width * 0.4));
+    }
+
+    void UI::render() const
+    {
+        std::vector<char> buffer_owner((m_width * m_height) + 1, ' ');
+        buffer_owner.at(m_width * m_height) = '\0';
+        char *buf = buffer_owner.data();
+        render_register("rax", m_vm.cpu().rax(), buf);
+        render_register("rbx", m_vm.cpu().rbx(), buf + m_width);
+        render_register("rsp", m_vm.cpu().rsp(), buf + m_width*2);
+
+        const auto &stack = m_vm.stack().content();
+        for(size_t i = 0; i < stack.size(); ++i )
         {
-            ss << static_cast<int>(v) << " "; // TODO format nicely
+            std::stringstream ss;
+            ss << m_vm.stack().top() - i << " " << static_cast<int>(stack[i]);
+            const auto s = ss.str();
+            std::copy(s.c_str(), s.c_str() + s.size(), &(buf[m_width*i + 100]));
         }
-        ss << std::endl;
-        return ss.str();
+        std::cout << buf;
     }
 } // namespace ostrich
