@@ -1,4 +1,5 @@
-import std.core;
+#include <iostream>
+#include <string_view>
 
 import Ostrich;
 

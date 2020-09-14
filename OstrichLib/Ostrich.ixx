@@ -1,6 +1,9 @@
-export module Ostrich;
+module;
 
-import std.core;
+#include <string>
+#include <variant>
+#include <vector>
+export module Ostrich;
 
 namespace ostrich
 {
