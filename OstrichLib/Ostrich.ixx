@@ -37,4 +37,6 @@ namespace ostrich
         uint64_t m_rax{ 0 };
         uint64_t m_rbx{ 0 };
     };
+
+    export std::string visualize(const Cpu &cpu);
 } // namespace ostrich
