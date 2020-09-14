@@ -9,3 +9,4 @@ It doesn't really qualify as an emu(lator), it's more of an ostrich. And I'm sti
 
 - Modules
 - using enum
+- designated initializers
