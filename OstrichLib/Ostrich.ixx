@@ -9,25 +9,31 @@ namespace ostrich
 {
     export enum class RegisterName { rax, rbx, rsp };
 
+    //export int tooString(RegisterName registerName);
+
     export struct Inc
     {
         RegisterName registerName;
+        std::string toString() const;
     };
 
     export struct Dec
     {
         RegisterName registerName;
+        std::string toString() const;
     };
 
     export struct Add
     {
         RegisterName destination;
         RegisterName source;
+        std::string toString() const;
     };
 
     export struct Push
     {
         RegisterName registerName;
+        std::string toString() const;
     };
 
     export using Instruction = std::variant<Inc, Dec, Add, Push>;
@@ -72,10 +78,14 @@ namespace ostrich
         const Cpu &cpu() const;
         Cpu &cpu(); // TODO don't expose this directly
         const Stack &stack() const;
+        const std::vector<Instruction> &source() const;
 
     private:
         Stack m_stack{ 16, 0xffff };
         Cpu m_cpu{ m_stack };
+
+    public://TODO private and use constructor
+        std::vector<Instruction> m_source;
     };
 
     export class UI

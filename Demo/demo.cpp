@@ -12,6 +12,13 @@ void print(const std::string_view &s)
 int main()
 {
     ostrich::Vm vm;
+    vm.m_source.push_back(ostrich::Inc{ ostrich::RegisterName::rax });
+    vm.m_source.push_back(ostrich::Inc{ ostrich::RegisterName::rbx });
+    vm.m_source.push_back(
+    ostrich::Add{ .destination = ostrich::RegisterName::rax, .source = ostrich::RegisterName::rbx });
+    vm.m_source.push_back(ostrich::Push{ ostrich::RegisterName::rbx });
+    vm.m_source.push_back(ostrich::Push{ ostrich::RegisterName::rax });
+    vm.m_source.push_back(ostrich::Dec{ ostrich::RegisterName::rbx });
     ostrich::UI ui(120, 28, vm);
     ui.render();
     print("inc rax");

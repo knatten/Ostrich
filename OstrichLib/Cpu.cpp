@@ -1,3 +1,10 @@
+module;
+
+#include <exception>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <variant>
 module Ostrich;
 
 
@@ -8,6 +15,41 @@ namespace ostrich
         using Ts::operator()...;
     };
     template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
+    std::string toString(RegisterName registerName)
+    {
+        switch(registerName)
+        {
+            using enum RegisterName;
+        case rax:
+            return "rax";
+        case rbx:
+            return "rbx";
+        case rsp:
+            return "rsp";
+        }
+        throw std::runtime_error("No such register");
+    }
+
+    std::string Inc::toString() const
+    {
+        return "inc  " + ostrich::toString(registerName);
+    }
+
+     std::string Dec::toString() const
+    {
+        return "dec  " + ostrich::toString(registerName);
+    }
+
+     std::string Add::toString() const
+    {
+        return "add  " + ostrich::toString(destination) + " " + ostrich::toString(source);
+    }
+
+     std::string Push::toString() const
+    {
+        return "push " + ostrich::toString(registerName);
+    }
 
     Stack::Stack(uint64_t size, uint64_t top) : m_size{ size }, m_top{ top }, m_content(m_size, 0)
     {
@@ -97,6 +139,12 @@ namespace ostrich
         return m_stack;
     };
 
+     const std::vector<Instruction> &Vm::source() const
+    {
+
+        return m_source;
+    }
+
     UI::UI(size_t width, size_t height, Vm &vm) : m_width(width), m_height(height), m_vm(vm)
     {
     }
@@ -114,17 +162,28 @@ namespace ostrich
         std::vector<char> buffer_owner((m_width * m_height) + 1, ' ');
         buffer_owner.at(m_width * m_height) = '\0';
         char *buf = buffer_owner.data();
+
+        // Source
+         for(size_t i = 0; i < m_vm.source().size(); ++i)
+        {
+            const auto &instruction = m_vm.source()[i];
+            const auto s = std::visit([](const auto &i) { return i.toString(); }, instruction);
+            std::copy(s.c_str(), s.c_str() + s.size(), &(buf[m_width * i + 5]));
+        }
+
+        // Registers
         render_register("rax", m_vm.cpu().rax(), buf);
         render_register("rbx", m_vm.cpu().rbx(), buf + m_width);
-        render_register("rsp", m_vm.cpu().rsp(), buf + m_width*2);
+        render_register("rsp", m_vm.cpu().rsp(), buf + m_width * 2);
 
+        // Stack
         const auto &stack = m_vm.stack().content();
-        for(size_t i = 0; i < stack.size(); ++i )
+        for(size_t i = 0; i < stack.size(); ++i)
         {
             std::stringstream ss;
             ss << m_vm.stack().top() - i << " " << static_cast<int>(stack[i]);
             const auto s = ss.str();
-            std::copy(s.c_str(), s.c_str() + s.size(), &(buf[m_width*i + 100]));
+            std::copy(s.c_str(), s.c_str() + s.size(), &(buf[m_width * i + 100]));
         }
         std::cout << buf;
     }
