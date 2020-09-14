@@ -36,17 +36,17 @@ namespace ostrich
         return "inc  " + ostrich::toString(registerName);
     }
 
-     std::string Dec::toString() const
+    std::string Dec::toString() const
     {
         return "dec  " + ostrich::toString(registerName);
     }
 
-     std::string Add::toString() const
+    std::string Add::toString() const
     {
         return "add  " + ostrich::toString(destination) + " " + ostrich::toString(source);
     }
 
-     std::string Push::toString() const
+    std::string Push::toString() const
     {
         return "push " + ostrich::toString(registerName);
     }
@@ -139,10 +139,21 @@ namespace ostrich
         return m_stack;
     };
 
-     const std::vector<Instruction> &Vm::source() const
+    const std::vector<Instruction> &Vm::source() const
     {
 
         return m_source;
+    }
+
+    size_t Vm::nextInstruction() const
+    {
+        return m_nextInstruction;
+    }
+
+    void Vm::step()
+    {
+        m_cpu.execute(m_source[m_nextInstruction]);
+        m_nextInstruction++;
     }
 
     UI::UI(size_t width, size_t height, Vm &vm) : m_width(width), m_height(height), m_vm(vm)
@@ -164,11 +175,13 @@ namespace ostrich
         char *buf = buffer_owner.data();
 
         // Source
-         for(size_t i = 0; i < m_vm.source().size(); ++i)
+        for(size_t i = 0; i < m_vm.source().size(); ++i)
         {
             const auto &instruction = m_vm.source()[i];
+            // TODO these two lines are a mess, should be a function
             const auto s = std::visit([](const auto &i) { return i.toString(); }, instruction);
-            std::copy(s.c_str(), s.c_str() + s.size(), &(buf[m_width * i + 5]));
+            const auto s2 = (i == m_vm.nextInstruction() ? "*" : " ") + s;
+            std::copy(s2.c_str(), s2.c_str() + s2.size(), &(buf[m_width * i + 5]));
         }
 
         // Registers
@@ -186,5 +199,16 @@ namespace ostrich
             std::copy(s.c_str(), s.c_str() + s.size(), &(buf[m_width * i + 100]));
         }
         std::cout << buf;
+    }
+
+    void UI::mainLoop()
+    {
+        while(m_vm.nextInstruction() < m_vm.source().size())
+        {
+            render();
+            std::cin.get();
+            m_vm.step();
+        }
+        render();
     }
 } // namespace ostrich

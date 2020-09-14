@@ -9,8 +9,6 @@ namespace ostrich
 {
     export enum class RegisterName { rax, rbx, rsp };
 
-    //export int tooString(RegisterName registerName);
-
     export struct Inc
     {
         RegisterName registerName;
@@ -79,12 +77,15 @@ namespace ostrich
         Cpu &cpu(); // TODO don't expose this directly
         const Stack &stack() const;
         const std::vector<Instruction> &source() const;
+        size_t nextInstruction() const;
+        void step();
 
     private:
         Stack m_stack{ 16, 0xffff };
         Cpu m_cpu{ m_stack };
+        size_t m_nextInstruction{ 0 };
 
-    public://TODO private and use constructor
+    public: // TODO private and use constructor
         std::vector<Instruction> m_source;
     };
 
@@ -93,6 +94,7 @@ namespace ostrich
     public:
         UI(size_t widht, size_t height, Vm &vm);
         void render() const;
+        void mainLoop();
 
     private:
         void render_register(const std::string &name, uint64_t value, char *buf) const;

@@ -12,6 +12,7 @@ void print(const std::string_view &s)
 int main()
 {
     ostrich::Vm vm;
+    //TODO parse and popuplate in constructor
     vm.m_source.push_back(ostrich::Inc{ ostrich::RegisterName::rax });
     vm.m_source.push_back(ostrich::Inc{ ostrich::RegisterName::rbx });
     vm.m_source.push_back(
@@ -19,34 +20,7 @@ int main()
     vm.m_source.push_back(ostrich::Push{ ostrich::RegisterName::rbx });
     vm.m_source.push_back(ostrich::Push{ ostrich::RegisterName::rax });
     vm.m_source.push_back(ostrich::Dec{ ostrich::RegisterName::rbx });
-    ostrich::UI ui(120, 28, vm);
-    ui.render();
-    print("inc rax");
-
-    vm.cpu().execute(ostrich::Inc{ ostrich::RegisterName::rax });
-    ui.render();
-    print("inc rbx");
-
-    vm.cpu().execute(ostrich::Inc{ ostrich::RegisterName::rbx });
-    ui.render();
-    print("add rax rbx");
-
-    vm.cpu().execute(
-    ostrich::Add{ .destination = ostrich::RegisterName::rax, .source = ostrich::RegisterName::rbx });
-    ui.render();
-    print("push rbx");
-
-    vm.cpu().execute(ostrich::Push{ ostrich::RegisterName::rbx });
-    ui.render();
-    print("push rax");
-
-    vm.cpu().execute(ostrich::Push{ ostrich::RegisterName::rax });
-    ui.render();
-    print("dec rbx");
-
-    vm.cpu().execute(ostrich::Dec{ ostrich::RegisterName::rbx });
-    ui.render();
-    print("DONE");
-
+    ostrich::UI ui(120, 30, vm);
+    ui.mainLoop();
     std::cin.get();
 }
