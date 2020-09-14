@@ -38,5 +38,21 @@ namespace ostrich
         uint64_t m_rbx{ 0 };
     };
 
-    export std::string visualize(const Cpu &cpu);
+    export class Vm
+    {
+    public:
+        const Cpu &cpu() const
+        {
+            return m_cpu;
+        };
+        Cpu &cpu()
+        {
+            return m_cpu;
+        };
+
+    private:
+        Cpu m_cpu;
+    };
+
+    export std::string visualize(const Vm &vm);
 } // namespace ostrich

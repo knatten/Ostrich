@@ -1,7 +1,6 @@
 module Ostrich;
 
 
-
 namespace ostrich
 {
     template <class... Ts> struct overloaded : Ts...
@@ -42,9 +41,10 @@ namespace ostrich
         throw std::runtime_error("No such register");
     }
 
-    std::string visualize(const Cpu &cpu)
+    std::string visualize(const Vm &vm)
     {
         std::stringstream ss;
+        const Cpu &cpu = vm.cpu();
         ss << cpu.rax() << ", " << cpu.rbx() << std::endl;
         return ss.str();
     }
