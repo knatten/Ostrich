@@ -48,6 +48,7 @@ namespace ostrich
     {
     public:
         Cpu(Stack &stack);
+
         void execute(const Instruction &instruction);
         uint64_t rax() const;
         uint64_t rbx() const;
@@ -65,18 +66,9 @@ namespace ostrich
     export class Vm
     {
     public:
-        const Cpu &cpu() const
-        {
-            return m_cpu;
-        };
-        Cpu &cpu() // TODO don't expose this directly
-        {
-            return m_cpu;
-        };
-        const Stack &stack() const
-        {
-            return m_stack;
-        };
+        const Cpu &cpu() const;
+        Cpu &cpu(); // TODO don't expose this directly
+        const Stack &stack() const;
 
     private:
         Stack m_stack{ 16, 0xffff };

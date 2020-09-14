@@ -56,10 +56,12 @@ namespace ostrich
     {
         return m_rax;
     }
+
     uint64_t Cpu::rbx() const
     {
         return m_rbx;
     }
+
     uint64_t Cpu::rsp() const
     {
         return m_rsp;
@@ -79,6 +81,21 @@ namespace ostrich
         }
         throw std::runtime_error("No such register");
     }
+
+    const Cpu &Vm::cpu() const
+    {
+        return m_cpu;
+    };
+
+    Cpu &Vm::cpu()
+    {
+        return m_cpu;
+    };
+
+    const Stack &Vm::stack() const
+    {
+        return m_stack;
+    };
 
     std::string visualize(const Vm &vm)
     {
