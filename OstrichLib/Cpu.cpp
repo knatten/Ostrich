@@ -30,7 +30,7 @@ namespace ostrich
         {
             const uint8_t byte{ static_cast<uint8_t>(value >> i * 8) };
             const size_t index{ lsb_index - i };
-            m_content.at(index) = byte;
+            m_content.at(index) = byte; //TODO bounds check at function level instead
         }
     }
 
