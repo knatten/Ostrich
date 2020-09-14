@@ -120,6 +120,7 @@
       <EnableModules>true</EnableModules>
       <DisableSpecificWarnings>5050</DisableSpecificWarnings>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,6 +139,7 @@
       <EnableModules>true</EnableModules>
       <DisableSpecificWarnings>5050</DisableSpecificWarnings>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
