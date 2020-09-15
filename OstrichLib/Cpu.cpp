@@ -34,6 +34,7 @@ namespace ostrich
                        m_stack.store(m_rsp, reg(push.registerName));
                        m_rsp -= 8;
                    },
+                   [this](const Mov &mov) { reg(mov.destination) = mov.value; },
                    },
                    instruction);
     }

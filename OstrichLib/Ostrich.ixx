@@ -35,7 +35,14 @@ namespace ostrich
         std::string toString() const;
     };
 
-    export using Instruction = std::variant<Inc, Dec, Add, Push>;
+    export struct Mov
+    {
+        RegisterName destination;
+        uint64_t value;
+        std::string toString() const;
+    };
+
+    export using Instruction = std::variant<Inc, Dec, Add, Push, Mov>;
 
     export class Stack
     {
