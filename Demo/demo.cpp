@@ -11,15 +11,12 @@ void print(const std::string_view &s)
 
 int main()
 {
-    ostrich::Vm vm;
-    //TODO parse and popuplate in constructor
-    vm.m_source.push_back(ostrich::Inc{ ostrich::RegisterName::rax });
-    vm.m_source.push_back(ostrich::Inc{ ostrich::RegisterName::rbx });
-    vm.m_source.push_back(
-    ostrich::Add{ .destination = ostrich::RegisterName::rax, .source = ostrich::RegisterName::rbx });
-    vm.m_source.push_back(ostrich::Push{ ostrich::RegisterName::rbx });
-    vm.m_source.push_back(ostrich::Push{ ostrich::RegisterName::rax });
-    vm.m_source.push_back(ostrich::Dec{ ostrich::RegisterName::rbx });
+    // TODO parse and popuplate in constructor
+    ostrich::Vm vm{ ostrich::Source{
+    ostrich::Inc{ ostrich::RegisterName::rax }, ostrich::Inc{ ostrich::RegisterName::rbx },
+    ostrich::Add{ .destination = ostrich::RegisterName::rax, .source = ostrich::RegisterName::rbx },
+    ostrich::Push{ ostrich::RegisterName::rbx }, ostrich::Push{ ostrich::RegisterName::rax },
+    ostrich::Dec{ ostrich::RegisterName::rbx } } };
     ostrich::UI ui(120, 30, vm);
     ui.mainLoop();
     std::cin.get();

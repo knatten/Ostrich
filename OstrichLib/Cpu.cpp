@@ -13,7 +13,7 @@ namespace ostrich
     };
     template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
-    Cpu::Cpu(Stack &stack, std::vector<Instruction> &source)
+    Cpu::Cpu(Stack &stack, Source &source)
     : m_stack(stack), m_source(source), m_rsp{ stack.top() }
     {
     }

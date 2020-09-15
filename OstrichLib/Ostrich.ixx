@@ -52,10 +52,12 @@ namespace ostrich
         std::vector<uint8_t> m_content;
     };
 
+    export using Source = std::vector<Instruction>;
+
     export class Cpu
     {
     public:
-        Cpu(Stack &stack, std::vector<Instruction> &source);
+        Cpu(Stack &stack, Source &source);
 
         void step();
         size_t nextInstruction() const;
@@ -69,7 +71,7 @@ namespace ostrich
         void execute(const Instruction &instruction);
 
         Stack &m_stack;
-        std::vector<Instruction> &m_source;
+        Source &m_source;
         size_t m_nextInstruction{ 0 };
         uint64_t m_rax{ 0 };
         uint64_t m_rbx{ 0 };
@@ -79,18 +81,16 @@ namespace ostrich
     export class Vm
     {
     public:
+        Vm(Source source);
         void step();
         const Cpu &cpu() const;
         const Stack &stack() const;
-        const std::vector<Instruction> &source() const;
+        const Source &source() const;
 
     private:
         Stack m_stack{ 16, 0xffff };
-    public: // TODO private and use constructor
-        std::vector<Instruction> m_source;
-    private:
         Cpu m_cpu{ m_stack, m_source };
-
+        Source m_source;
     };
 
     export class UI

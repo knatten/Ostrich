@@ -47,12 +47,16 @@ namespace ostrich
         }
     }
 
+    Vm::Vm(Source source) : m_source{ std::move(source) }
+    {
+    }
+
     const Stack &Vm::stack() const
     {
         return m_stack;
     };
 
-    const std::vector<Instruction> &Vm::source() const
+    const Source &Vm::source() const
     {
 
         return m_source;
