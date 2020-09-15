@@ -1,8 +1,9 @@
 module;
 
+#include <fmt/core.h>
+
 #include <exception>
 #include <iostream>
-#include <sstream>
 #include <string>
 #include <variant>
 module Ostrich;
@@ -163,9 +164,7 @@ namespace ostrich
 
     void UI::render_register(const std::string &name, uint64_t value, char *buf) const
     {
-        std::stringstream ss;
-        ss << name << ": " << value;
-        std::string s = ss.str();
+        const auto s = fmt::format("{0}: {1:016X}", name, value);
         std::copy(s.c_str(), s.c_str() + s.size(), &(buf[0]) + static_cast<int>(m_width * 0.4));
     }
 
@@ -194,10 +193,8 @@ namespace ostrich
         const auto &stack = m_vm.stack().content();
         for(size_t i = 0; i < stack.size(); ++i)
         {
-            std::stringstream ss;
-            ss << m_vm.stack().top() - i << " " << static_cast<int>(stack[i]);
-            const auto s = ss.str();
-            std::copy(s.c_str(), s.c_str() + s.size(), &(buf[m_width * i + 100]));
+            const auto s = fmt::format("{0:04X}: {1:02X}", m_vm.stack().top() - i, stack[i]);
+            std::copy(s.c_str(), s.c_str() + s.size(), &(buf[m_width * i + m_width - 14]));
         }
         std::cout << buf;
     }
