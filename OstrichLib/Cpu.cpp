@@ -76,8 +76,15 @@ namespace ostrich
         }
     }
 
-    Cpu::Cpu(Stack &stack) : m_stack(stack), m_rsp{ stack.top() }
+    Cpu::Cpu(Stack &stack, std::vector<Instruction> &source)
+    : m_stack(stack), m_source(source), m_rsp{ stack.top() }
     {
+    }
+
+    void Cpu::step()
+    {
+        execute(m_source[m_nextInstruction]);
+        m_nextInstruction++;
     }
 
     void Cpu::execute(const Instruction &instruction)
@@ -92,6 +99,11 @@ namespace ostrich
                    },
                    },
                    instruction);
+    }
+
+    size_t Cpu::nextInstruction() const
+    {
+        return m_nextInstruction;
     }
 
     uint64_t Cpu::rax() const
@@ -124,12 +136,12 @@ namespace ostrich
         throw std::runtime_error("No such register");
     }
 
-    const Cpu &Vm::cpu() const
+    void Vm::step()
     {
-        return m_cpu;
-    };
+        m_cpu.step();
+    }
 
-    Cpu &Vm::cpu()
+    const Cpu &Vm::cpu() const
     {
         return m_cpu;
     };
@@ -143,17 +155,6 @@ namespace ostrich
     {
 
         return m_source;
-    }
-
-    size_t Vm::nextInstruction() const
-    {
-        return m_nextInstruction;
-    }
-
-    void Vm::step()
-    {
-        m_cpu.execute(m_source[m_nextInstruction]);
-        m_nextInstruction++;
     }
 
     UI::UI(size_t width, size_t height, Vm &vm) : m_width(width), m_height(height), m_vm(vm)
@@ -180,7 +181,7 @@ namespace ostrich
             const auto &instruction = m_vm.source()[i];
             // TODO these two lines are a mess, should be a function
             const auto s = std::visit([](const auto &i) { return i.toString(); }, instruction);
-            const auto s2 = (i == m_vm.nextInstruction() ? "*" : " ") + s;
+            const auto s2 = (i == m_vm.cpu().nextInstruction() ? "*" : " ") + s;
             std::copy(s2.c_str(), s2.c_str() + s2.size(), &(buf[m_width * i + 5]));
         }
 
@@ -203,7 +204,7 @@ namespace ostrich
 
     void UI::mainLoop()
     {
-        while(m_vm.nextInstruction() < m_vm.source().size())
+        while(m_vm.cpu().nextInstruction() < m_vm.source().size())
         {
             render();
             std::cin.get();

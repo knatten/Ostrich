@@ -54,9 +54,12 @@ namespace ostrich
     export class Cpu
     {
     public:
-        Cpu(Stack &stack);
+        Cpu(Stack &stack, std::vector<Instruction> &source);
 
-        void execute(const Instruction &instruction);
+        void step();
+        void execute(const Instruction &instruction); //TODO hide or combine with step?
+        size_t nextInstruction() const;
+
         uint64_t rax() const;
         uint64_t rbx() const;
         uint64_t rsp() const;
@@ -65,6 +68,8 @@ namespace ostrich
         uint64_t &reg(RegisterName r);
 
         Stack &m_stack;
+        std::vector<Instruction> &m_source;
+        size_t m_nextInstruction{ 0 };
         uint64_t m_rax{ 0 };
         uint64_t m_rbx{ 0 };
         uint64_t m_rsp{ 0 };
@@ -73,20 +78,18 @@ namespace ostrich
     export class Vm
     {
     public:
+        void step();
         const Cpu &cpu() const;
-        Cpu &cpu(); // TODO don't expose this directly
         const Stack &stack() const;
         const std::vector<Instruction> &source() const;
-        size_t nextInstruction() const;
-        void step();
 
     private:
         Stack m_stack{ 16, 0xffff };
-        Cpu m_cpu{ m_stack };
-        size_t m_nextInstruction{ 0 };
-
     public: // TODO private and use constructor
         std::vector<Instruction> m_source;
+    private:
+        Cpu m_cpu{ m_stack, m_source };
+
     };
 
     export class UI
