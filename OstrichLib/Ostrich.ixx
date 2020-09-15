@@ -58,7 +58,6 @@ namespace ostrich
         Cpu(Stack &stack, std::vector<Instruction> &source);
 
         void step();
-        void execute(const Instruction &instruction); //TODO hide or combine with step?
         size_t nextInstruction() const;
 
         uint64_t rax() const;
@@ -67,6 +66,7 @@ namespace ostrich
 
     private:
         uint64_t &reg(RegisterName r);
+        void execute(const Instruction &instruction);
 
         Stack &m_stack;
         std::vector<Instruction> &m_source;
