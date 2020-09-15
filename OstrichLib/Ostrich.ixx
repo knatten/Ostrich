@@ -35,6 +35,12 @@ namespace ostrich
         std::string toString() const;
     };
 
+    export struct Pop
+    {
+        RegisterName registerName;
+        std::string toString() const;
+    };
+
     export struct Mov
     {
         RegisterName destination;
@@ -42,7 +48,7 @@ namespace ostrich
         std::string toString() const;
     };
 
-    export using Instruction = std::variant<Inc, Dec, Add, Push, Mov>;
+    export using Instruction = std::variant<Inc, Dec, Add, Push, Pop, Mov>;
 
     export class Stack
     {
@@ -52,6 +58,7 @@ namespace ostrich
         const std::vector<uint8_t> content() const;
         uint64_t top() const;
         void store(uint64_t address, uint64_t value);
+        uint64_t load(uint64_t addres);
 
     private:
         uint64_t m_size;

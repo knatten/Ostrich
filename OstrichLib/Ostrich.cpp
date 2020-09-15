@@ -47,6 +47,22 @@ namespace ostrich
         }
     }
 
+    uint64_t Stack::load(uint64_t address)
+    {
+        uint64_t result{ 0 };
+        for(uint64_t i = 0; i < 8; ++i)
+        {
+            const size_t index{ m_top - address + i };
+            // TODO bounds check at function level instead
+            result += m_content.at(index);
+            if(i < 7)
+            {
+                result = result << 8;
+            }
+        }
+        return result;
+    }
+
     Vm::Vm(Source source) : m_source{ std::move(source) }
     {
     }

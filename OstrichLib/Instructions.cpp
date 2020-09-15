@@ -28,6 +28,11 @@ namespace ostrich
         return "push " + ostrich::toString(registerName);
     }
 
+    std::string Pop::toString() const
+    {
+        return "pop " + ostrich::toString(registerName);
+    }
+
     std::string Mov::toString() const
     {
         return fmt::format("mov  {0} {1:X}", ostrich::toString(destination), value);
