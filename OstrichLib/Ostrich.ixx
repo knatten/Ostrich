@@ -8,6 +8,7 @@ export module Ostrich;
 namespace ostrich
 {
     export enum class RegisterName { rax, rbx, rsp };
+    std::string toString(RegisterName registerName);
 
     export struct Inc
     {
