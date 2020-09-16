@@ -49,13 +49,14 @@ namespace ostrich
         throw std::runtime_error(fmt::format("Unknown register name '{}'", reg));
     }
 
-    // TODO concept check both these (and same in other functions here)
-    template <typename InstructionType, typename Operands>
+    // TODO constrain that Operands is ForwardIterator of string_view (or "something stringish" if that concept exist)
+    template <InstructionSingleRegisterOperand InstructionType, typename Operands>
     InstructionType parseInstructionWithSingleRegister(const Operands &operands)
     {
         return InstructionType{ parseRegister(operands[0]) };
     }
 
+    // TODO constrain InstructionType
     template <typename InstructionType, typename Operands>
     InstructionType parseInstructionWithSourceAndDestination(const Operands &operands)
     {
