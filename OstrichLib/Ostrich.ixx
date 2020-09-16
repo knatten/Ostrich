@@ -1,5 +1,6 @@
 module;
 
+#include <ostream>
 #include <string>
 #include <variant>
 #include <vector>
@@ -82,6 +83,19 @@ namespace ostrich
     export bool operator==(const Mov &lhs, const Mov &rhs)
     {
         return lhs.destination == rhs.destination && lhs.value == rhs.value;
+    }
+
+    export template<InstructionAny I>
+    std::ostream &operator<<(std::ostream& os, I instruction)
+    {
+        os << instruction.toString();
+        return os;
+    }
+
+    export std::ostream &operator<<(std::ostream& os, Instruction instruction)
+    {
+        os << std::visit([](const auto &i) { return i.toString(); }, instruction);
+        return os;
     }
 
     // Stack

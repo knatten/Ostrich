@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include <iostream>
+#include <sstream>
 #include <variant>
 
 import Ostrich;
@@ -27,5 +28,16 @@ TEST_CASE("Can compare using the variant")
     CHECK(Instruction{ Inc{ rax } } != Instruction{ Inc{ rbx } });
 
     CHECK(Instruction{ Inc{ rax } } != Instruction{ Dec{ rbx } });
-    CHECK(Instruction{ Add{ rax, rbx } } != Instruction{ Mov{ rbx , 2} });
+    CHECK(Instruction{ Add{ rax, rbx } } != Instruction{ Mov{ rbx, 2 } });
+}
+
+TEST_CASE("Can ostream instructions")
+{
+    std::stringstream ss1;
+    ss1 << Push{ rbx };
+    CHECK("push rbx" == ss1.str());
+
+    std::stringstream ss2;
+    ss2 << Instruction{ Push{ rax } };
+    CHECK("push rax" == ss2.str());
 }
