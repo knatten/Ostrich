@@ -156,6 +156,7 @@
     <ClCompile Include="Ostrich.ixx" />
     <ClCompile Include="Ostrich.cpp" />
     <ClCompile Include="Parser.cpp" />
+    <ClCompile Include="Stack.cpp" />
     <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
