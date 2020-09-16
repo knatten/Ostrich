@@ -144,6 +144,7 @@ namespace ostrich
 
     // Parser
     export Instruction parseInstruction(const std::string_view &sourceLine);
+    export Source parse(const std::string_view &sourceText);
 
     // UI
     export class UI

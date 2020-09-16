@@ -12,14 +12,14 @@ module Ostrich;
 namespace ostrich
 {
     // split_view is not implemented yet, so I stole https://www.bfilipek.com/2018/07/string-view-perf-followup.html
-    std::vector<std::string_view> split(const std::string_view &sourceLine)
+    std::vector<std::string_view> split(const std::string_view &sourceLine, const char delimiter)
     {
         std::vector<std::string_view> output;
         auto first = sourceLine.begin();
 
         while(first != sourceLine.end())
         {
-            const auto second = std::find(first, std::cend(sourceLine), ' ');
+            const auto second = std::find(first, std::cend(sourceLine), delimiter);
             if(first != second)
             {
                 output.emplace_back(sourceLine.substr(std::distance(sourceLine.begin(), first),
@@ -73,7 +73,7 @@ namespace ostrich
 
     Instruction parseInstruction(const std::string_view &sourceLine)
     {
-        const auto tokens = split(sourceLine);
+        const auto tokens = split(sourceLine, ' ');
         if(tokens.empty())
         {
             throw std::runtime_error("Failed to parse empty source line!");
@@ -110,4 +110,15 @@ namespace ostrich
             fmt::format("Failed to parse '{}', instruction '{}' not recognized", sourceLine, instruction));
         }
     };
+
+    Source parse(const std::string_view &sourceText)
+    {
+        Source source;
+        const auto lines = split(sourceText, '\n');
+        for(const auto &line : lines)
+        {
+            source.push_back(parseInstruction(line));
+        }
+        return source;
+    }
 } // namespace ostrich

@@ -5,10 +5,14 @@
 import Ostrich;
 
 using Catch::Matchers::Contains;
+using Catch::Matchers::Equals;
+using namespace ostrich; //TODO remove qualifiers in the source code now that we have this here
+using enum RegisterName;
 
 namespace
 {
     // TODO test concepts here?
+    // TODO now we can use equality operator instead
     template <typename InstructionType>
     InstructionType checkInstruction(const ostrich::Instruction &parsedInstruction)
     {
@@ -63,4 +67,12 @@ TEST_CASE("Unknown instructions or empty source lines")
     CHECK_THROWS_WITH(ostrich::parseInstruction("wat"), Contains("Failed to parse 'wat'"));
     CHECK_THROWS_WITH(ostrich::parseInstruction(""),
                       Contains("Failed to parse empty source line!"));
+}
+
+TEST_CASE("Parsing full source")
+{
+    CHECK(parse("").empty());
+    CHECK(Instruction{ Inc{ rax } } == parse("inc rax").at(0));
+    CHECK(Instruction{ Mov{ rbx, 2 } } == parse("mov rbx 2").at(0));
+    CHECK_THAT(parse("inc rax\ndec rbx"), Equals(std::vector{ Instruction{ Inc{ rax } }, Instruction{ Dec{ rbx } } }));
 }
