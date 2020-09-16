@@ -55,6 +55,11 @@ namespace ostrich
     std::is_same_v<InstructionType, Inc> || std::is_same_v<InstructionType, Dec> ||
     std::is_same_v<InstructionType, Push> || std::is_same_v<InstructionType, Pop>;
 
+    bool operator==(const Inc &lhs, const Inc &rhs)
+    {
+        return lhs.registerName == rhs.registerName;
+    }
+
     export Instruction parseInstruction(const std::string_view &sourceLine);
 
     export class Stack

@@ -91,7 +91,6 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <EnableModules>true</EnableModules>
       <AdditionalIncludeDirectories>C:\Users\knatten\code\Ostrich\OstrichLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/module:search C:\Users\knatten\code\Ostrich\OstrichLib %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -109,7 +108,6 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <EnableModules>true</EnableModules>
       <AdditionalIncludeDirectories>C:\Users\knatten\code\Ostrich\OstrichLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/module:search C:\Users\knatten\code\Ostrich\OstrichLib %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,7 +125,6 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <EnableModules>true</EnableModules>
       <AdditionalIncludeDirectories>C:\Users\knatten\code\Ostrich\OstrichLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/module:search C:\Users\knatten\code\Ostrich\OstrichLib %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>5050</DisableSpecificWarnings>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -147,7 +144,6 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <EnableModules>true</EnableModules>
       <AdditionalIncludeDirectories>C:\Users\knatten\code\Ostrich\OstrichLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/module:search C:\Users\knatten\code\Ostrich\OstrichLib %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>5050</DisableSpecificWarnings>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
