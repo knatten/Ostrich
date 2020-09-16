@@ -55,9 +55,30 @@ namespace ostrich
     std::is_same_v<InstructionType, Inc> || std::is_same_v<InstructionType, Dec> ||
     std::is_same_v<InstructionType, Push> || std::is_same_v<InstructionType, Pop>;
 
-    bool operator==(const Inc &lhs, const Inc &rhs)
+    template <typename InstructionType>
+    concept InstructionAny = InstructionSingleRegisterOperand<InstructionType> ||
+                             std::is_same_v<InstructionType, Add> || std::is_same_v<InstructionType, Mov>;
+
+    export template <InstructionAny LhsInstruction, InstructionAny RhsInstruction>
+    bool operator==(const LhsInstruction &lhs, const RhsInstruction &rhs)
     {
-        return lhs.registerName == rhs.registerName;
+        return false;
+    }
+
+    export template <InstructionSingleRegisterOperand LhsInstruction, InstructionSingleRegisterOperand RhsInstruction>
+    bool operator==(const LhsInstruction &lhs, const RhsInstruction &rhs)
+    {
+        return std::is_same_v<LhsInstruction, RhsInstruction> && lhs.registerName == rhs.registerName;
+    }
+
+    export bool operator==(const Add &lhs, const Add &rhs)
+    {
+        return lhs.destination == rhs.destination && lhs.source == rhs.source;
+    }
+
+    export bool operator==(const Mov &lhs, const Mov &rhs)
+    {
+        return lhs.destination == rhs.destination && lhs.value == rhs.value;
     }
 
     export Instruction parseInstruction(const std::string_view &sourceLine);
