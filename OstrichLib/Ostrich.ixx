@@ -53,12 +53,12 @@ namespace ostrich
     export using Instruction = std::variant<Inc, Dec, Add, Push, Pop, Mov>;
     export using Source = std::vector<Instruction>;
 
-    template <typename InstructionType>
+    export template <typename InstructionType>
     concept InstructionSingleRegisterOperand =
     std::is_same_v<InstructionType, Inc> || std::is_same_v<InstructionType, Dec> ||
     std::is_same_v<InstructionType, Push> || std::is_same_v<InstructionType, Pop>;
 
-    template <typename InstructionType>
+    export template <typename InstructionType>
     concept InstructionAny = InstructionSingleRegisterOperand<InstructionType> ||
                              std::is_same_v<InstructionType, Add> || std::is_same_v<InstructionType, Mov>;
 

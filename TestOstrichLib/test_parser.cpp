@@ -1,5 +1,8 @@
 #include "catch.hpp"
+#include <fmt/core.h>
 
+#include <iostream>
+#include <ostream>
 #include <variant>
 
 import Ostrich;
@@ -11,54 +14,42 @@ using enum RegisterName;
 
 namespace
 {
-    // TODO test concepts here?
-    // TODO now we can use equality operator instead
-    template <typename InstructionType>
-    InstructionType checkInstruction(const Instruction &parsedInstruction)
+    template<InstructionAny InstructionType>
+    void checkInstruction(const InstructionType& expected, const Instruction& parsedInstruction)
     {
-        INFO("Checking " << std::visit([](const auto i) { return i.toString(); }, parsedInstruction))
-        REQUIRE(std::holds_alternative<InstructionType>(parsedInstruction));
-        return std::get<InstructionType>(parsedInstruction);
+        INFO(fmt::format("Checking '{}' == '{}'", expected.toString(), std::visit([](const auto i) { return i.toString(); }, parsedInstruction)))
+        CHECK(expected == std::get<InstructionType>(parsedInstruction));
     }
-
 } // namespace
 
 TEST_CASE("Inc")
 {
-    const auto inc = checkInstruction<Inc>(parseInstruction("inc rax"));
-    REQUIRE(inc.registerName == rax);
+    checkInstruction(Inc{ rax }, parseInstruction("inc rax"));
 }
 
 TEST_CASE("Dec")
 {
-    const auto dec = checkInstruction<Dec>(parseInstruction("dec rbx"));
-    REQUIRE(dec.registerName == rbx);
+    checkInstruction(Dec{ rbx }, parseInstruction("dec rbx"));
 }
 
 TEST_CASE("Push")
 {
-    const auto push = checkInstruction<Push>(parseInstruction("push rax"));
-    REQUIRE(push.registerName == rax);
+    checkInstruction(Push{ rax }, parseInstruction("push rax"));
 }
 
 TEST_CASE("Pop")
 {
-    const auto pop = checkInstruction<Pop>(parseInstruction("pop rbx"));
-    REQUIRE(pop.registerName == rbx);
+    checkInstruction(Pop{ rbx }, parseInstruction("pop rbx"));
 }
 
 TEST_CASE("Add")
 {
-    const auto add = checkInstruction<Add>(parseInstruction("add rax rbx"));
-    REQUIRE(add.destination == rax);
-    REQUIRE(add.source == rbx);
+    checkInstruction(Add{ .destination=rax,.source=rbx }, parseInstruction("add rax rbx"));
 }
 
 TEST_CASE("Mov")
 {
-    const auto mov = checkInstruction<Mov>(parseInstruction("mov rbx ff"));
-    REQUIRE(mov.destination == rbx);
-    REQUIRE(mov.value == 0xff);
+    checkInstruction(Mov{ .destination=rbx,.value=0xff }, parseInstruction("mov rbx ff"));
 }
 
 TEST_CASE("Unknown instructions or empty source lines")
