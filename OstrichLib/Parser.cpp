@@ -67,8 +67,8 @@ namespace ostrich
     template <typename Operands>
     Mov parseMov(const Operands &operands)
     {
-        //TODO support leading "0x", then parse as hex, otherwise parse as base 10
-        return Mov{ parseRegister(operands[0]), std::stoull(std::string(operands[1]),0,16) };
+        // TODO support leading "0x", then parse as hex, otherwise parse as base 10
+        return Mov{ parseRegister(operands[0]), std::stoull(std::string(operands[1]), 0, 16) };
     }
 
     Instruction parseInstruction(const std::string_view &sourceLine)

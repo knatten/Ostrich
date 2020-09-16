@@ -61,5 +61,6 @@ TEST_CASE("Unknown instructions or empty source lines")
 {
     CHECK_THROWS_WITH(ostrich::parseInstruction("lol wat"), Contains("Failed to parse 'lol wat'"));
     CHECK_THROWS_WITH(ostrich::parseInstruction("wat"), Contains("Failed to parse 'wat'"));
-    CHECK_THROWS_WITH(ostrich::parseInstruction(""), Contains("Failed to parse empty source line!"));
+    CHECK_THROWS_WITH(ostrich::parseInstruction(""),
+                      Contains("Failed to parse empty source line!"));
 }
