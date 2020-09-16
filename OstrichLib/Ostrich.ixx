@@ -7,9 +7,11 @@ export module Ostrich;
 
 namespace ostrich
 {
+    // Registers
     export enum class RegisterName { rax, rbx, rsp };
     std::string toString(RegisterName registerName);
 
+    // Instructions
     export struct Inc
     {
         RegisterName registerName;
@@ -49,6 +51,7 @@ namespace ostrich
     };
 
     export using Instruction = std::variant<Inc, Dec, Add, Push, Pop, Mov>;
+    export using Source = std::vector<Instruction>;
 
     template <typename InstructionType>
     concept InstructionSingleRegisterOperand =
@@ -81,8 +84,7 @@ namespace ostrich
         return lhs.destination == rhs.destination && lhs.value == rhs.value;
     }
 
-    export Instruction parseInstruction(const std::string_view &sourceLine);
-
+    // Stack
     export class Stack
     {
     public:
@@ -99,8 +101,7 @@ namespace ostrich
         std::vector<uint8_t> m_content;
     };
 
-    export using Source = std::vector<Instruction>;
-
+    // Cpu
     export class Cpu
     {
     public:
@@ -125,6 +126,7 @@ namespace ostrich
         uint64_t m_rsp{ 0 };
     };
 
+    // Vm
     export class Vm
     {
     public:
@@ -140,6 +142,10 @@ namespace ostrich
         Source m_source;
     };
 
+    // Parser
+    export Instruction parseInstruction(const std::string_view &sourceLine);
+
+    // UI
     export class UI
     {
     public:
