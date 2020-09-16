@@ -50,6 +50,8 @@ namespace ostrich
 
     export using Instruction = std::variant<Inc, Dec, Add, Push, Pop, Mov>;
 
+    export Instruction parseInstruction(const std::string_view &sourceLine);
+
     export class Stack
     {
     public:
