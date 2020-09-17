@@ -39,18 +39,21 @@ namespace ostrich
         }
 
         // Registers
-        render_register("rax", m_vm.cpu().rax(), buf);
-        render_register("rbx", m_vm.cpu().rbx(), buf + m_width);
-        render_register("rsp", m_vm.cpu().rsp(), buf + m_width * 2);
+        for(size_t i = 0; i < m_vm.cpu().registers().size(); ++i)
+        {
+            const auto &reg = m_vm.cpu().registers()[i];
+            render_register(toString(reg.registerName), reg.value, buf + m_width * (i + 10));
+        }
 
         // Stack
         const auto &stack = m_vm.stack().content();
         const size_t maxHeight{ m_height - 1 };
         for(size_t i = 0; i < stack.size(); ++i)
         {
-            const auto stackPointer{m_vm.stack().top() - i == m_vm.cpu().rsp() ? '>' : ' ' };
-            const auto s = fmt::format("{0}{1:04X}: {2:02X}", stackPointer, m_vm.stack().top() - i, stack[i]);
-            const size_t row{ i % maxHeight};
+            const auto stackPointer{ m_vm.stack().top() - i == m_vm.cpu().reg(RegisterName::rsp) ? '>' : ' ' };
+            const auto s =
+            fmt::format("{0}{1:04X}: {2:02X}", stackPointer, m_vm.stack().top() - i, stack[i]);
+            const size_t row{ i % maxHeight };
             const size_t col{ i / maxHeight };
             std::copy(s.c_str(), s.c_str() + s.size(), &(buf[m_width * row + m_width - 26 + col * 12]));
         }

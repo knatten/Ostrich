@@ -1,5 +1,6 @@
 module;
 
+#include <array>
 #include <filesystem>
 #include <ostream>
 #include <string>
@@ -12,6 +13,12 @@ namespace ostrich
     // Registers
     export enum class RegisterName { rax, rbx, rsp };
     std::string toString(RegisterName registerName);
+
+    export struct Register
+    {
+        RegisterName registerName;
+        uint64_t value;
+    };
 
     // Instructions
     export struct Inc
@@ -116,6 +123,13 @@ namespace ostrich
         std::vector<uint8_t> m_content;
     };
 
+    constexpr std::array<Register, 3> initRegisters()
+    {
+        using enum RegisterName;
+        // TODO niceify with ranges or something?
+        return { Register{ rax, 0 }, Register{ rbx, 0 }, Register{ rsp, 0 } };
+    }
+
     // Cpu
     export class Cpu
     {
@@ -125,10 +139,9 @@ namespace ostrich
         void step();
         void execute(const Instruction &instruction);
         size_t nextInstruction() const;
+        const std::array<Register, 3> registers() const;
 
-        uint64_t rax() const;
-        uint64_t rbx() const;
-        uint64_t rsp() const;
+        const uint64_t &reg(RegisterName r) const; //TODO rename this and other overload to registerValue
 
     private:
         uint64_t &reg(RegisterName r);
@@ -136,9 +149,7 @@ namespace ostrich
         Stack *m_stack;
         Source *m_source;
         size_t m_nextInstruction{ 0 };
-        uint64_t m_rax{ 0 };
-        uint64_t m_rbx{ 0 };
-        uint64_t m_rsp{ 0 };
+        std::array<Register,3> m_registers{ initRegisters() };
     };
 
     // Vm
