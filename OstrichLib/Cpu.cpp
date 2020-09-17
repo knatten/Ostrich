@@ -59,7 +59,7 @@ namespace ostrich
     {
         return m_nextInstruction;
     }
-    const std::array<Register, 3> Cpu::registers() const
+    const std::array<Register, registerCount> Cpu::registers() const
     {
         return m_registers;
     }

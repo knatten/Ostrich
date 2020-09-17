@@ -42,7 +42,7 @@ namespace ostrich
         for(size_t i = 0; i < m_vm.cpu().registers().size(); ++i)
         {
             const auto &reg = m_vm.cpu().registers()[i];
-            render_register(toString(reg.registerName), reg.value, buf + m_width * (i + 10));
+            render_register(toString(reg.registerName), reg.value, buf + m_width * i);
         }
 
         // Stack

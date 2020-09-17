@@ -11,8 +11,8 @@ export module Ostrich;
 namespace ostrich
 {
     // Registers
-    export enum class RegisterName { rax, rbx, rsp };
-    constexpr size_t registerCount{ 3 };
+    export enum class RegisterName { rax, rbx, rcx, rdx, rsp };
+    constexpr size_t registerCount{ 5 };
     std::string toString(RegisterName registerName);
 
     export struct Register
@@ -133,7 +133,7 @@ namespace ostrich
         void step();
         void execute(const Instruction &instruction);
         size_t nextInstruction() const;
-        const std::array<Register, 3> registers() const;
+        const std::array<Register, registerCount> registers() const;
 
         const uint64_t &registerValue(RegisterName r) const;
 

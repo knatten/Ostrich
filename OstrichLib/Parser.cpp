@@ -46,6 +46,15 @@ namespace ostrich
         {
             return rbx;
         }
+        if(reg == "rcx")
+        {
+            return rcx;
+        }
+        if(reg == "rdx")
+        {
+            return rdx;
+        }
+        static_assert(registerCount == 5, "Don't forget to update this!");
         throw std::runtime_error(fmt::format("Unknown register name '{}'", reg));
     }
 
