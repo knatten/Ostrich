@@ -14,10 +14,11 @@ using enum RegisterName;
 
 namespace
 {
-    template<InstructionAny InstructionType>
-    void checkInstruction(const InstructionType& expected, const Instruction& parsedInstruction)
+    template <InstructionAny InstructionType>
+    void checkInstruction(const InstructionType &expected, const Instruction &parsedInstruction)
     {
-        INFO(fmt::format("Checking '{}' == '{}'", expected.toString(), std::visit([](const auto i) { return i.toString(); }, parsedInstruction)))
+        INFO(fmt::format("Checking '{}' == '{}'", expected.toString(),
+                         std::visit([](const auto i) { return i.toString(); }, parsedInstruction)))
         CHECK(expected == std::get<InstructionType>(parsedInstruction));
     }
 } // namespace
@@ -44,12 +45,12 @@ TEST_CASE("Pop")
 
 TEST_CASE("Add")
 {
-    checkInstruction(Add{ .destination=rax,.source=rbx }, parseInstruction("add rax rbx"));
+    checkInstruction(Add{ .destination = rax, .source = rbx }, parseInstruction("add rax rbx"));
 }
 
 TEST_CASE("Mov")
 {
-    checkInstruction(Mov{ .destination=rbx,.value=0xff }, parseInstruction("mov rbx ff"));
+    checkInstruction(Mov{ .destination = rbx, .value = 0xff }, parseInstruction("mov rbx ff"));
 }
 
 TEST_CASE("Unknown instructions or empty source lines")
