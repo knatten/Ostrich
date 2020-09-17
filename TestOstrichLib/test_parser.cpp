@@ -23,35 +23,38 @@ namespace
     }
 } // namespace
 
-TEST_CASE("Inc")
+TEST_CASE("Instructions with only single register operand")
 {
     checkInstruction(Inc{ rax }, parseInstruction("inc rax"));
-}
-
-TEST_CASE("Dec")
-{
     checkInstruction(Dec{ rbx }, parseInstruction("dec rbx"));
-}
-
-TEST_CASE("Push")
-{
     checkInstruction(Push{ rax }, parseInstruction("push rax"));
-}
-
-TEST_CASE("Pop")
-{
     checkInstruction(Pop{ rbx }, parseInstruction("pop rbx"));
+
+    CHECK_THROWS_WITH(parseInstruction("inc"),
+                      Contains("Wrong number of operands, got 0, expected 1"));
+    CHECK_THROWS_WITH(parseInstruction("inc rax rbx"),
+                      Contains("Wrong number of operands, got 2, expected 1"));
 }
 
 TEST_CASE("Add")
 {
     checkInstruction(Add{ .destination = rax, .source = rbx }, parseInstruction("add rax rbx"));
+
+    CHECK_THROWS_WITH(parseInstruction("add"),
+                      Contains("Wrong number of operands, got 0, expected 2"));
+    CHECK_THROWS_WITH(parseInstruction("add rax rbx rcx"),
+                      Contains("Wrong number of operands, got 3, expected 2"));
 }
 
 TEST_CASE("Mov")
 {
     checkInstruction(Mov{ .destination = rbx, .value = 0xff }, parseInstruction("mov rbx 0xff"));
     checkInstruction(Mov{ .destination = rbx, .value = 10 }, parseInstruction("mov rbx 10"));
+
+    CHECK_THROWS_WITH(parseInstruction("mov"),
+                      Contains("Wrong number of operands, got 0, expected 2"));
+    CHECK_THROWS_WITH(parseInstruction("mov rax rbx rcx"),
+                      Contains("Wrong number of operands, got 3, expected 2"));
 }
 
 TEST_CASE("Unknown instructions or empty source lines")

@@ -64,17 +64,30 @@ namespace ostrich
                                          std::stoull(std::string(value));
     }
 
-    // TODO constrain that Operands is ForwardIterator of string_view (or "something stringish" if that concept exist)
-    template <InstructionSingleRegisterOperand InstructionType, typename Operands>
+    template <typename T>
+    concept OperandList =
+    std::forward_iterator<std::ranges::iterator_t<T>> &&std::is_same_v<std::ranges::range_value_t<T>, std::string_view>;
+
+    template <InstructionSingleRegisterOperand InstructionType, OperandList Operands>
     InstructionType parseInstructionWithSingleRegister(const Operands &operands)
     {
+        if(operands.size() != 1)
+        {
+            throw std::runtime_error(
+            fmt::format("Wrong number of operands, got {}, expected {}.", operands.size(), 1));
+        }
         return InstructionType{ parseRegister(operands[0]) };
     }
 
-    // TODO constrain InstructionType
-    template <typename InstructionType, typename Operands>
-    InstructionType parseInstructionWithSourceAndDestination(const Operands &operands)
+    template <typename InstructionType, OperandList Operands>
+    requires(std::is_same_v<InstructionType, Mov> || std::is_same_v<InstructionType, Add>) InstructionType
+    parseInstructionWithSourceAndDestination(const Operands &operands)
     {
+        if(operands.size() != 2)
+        {
+            throw std::runtime_error(
+            fmt::format("Wrong number of operands, got {}, expected {}.", operands.size(), 2));
+        }
         return InstructionType{ parseRegister(operands[0]), parseRegister(operands[1]) };
     }
 
@@ -82,6 +95,11 @@ namespace ostrich
     template <typename Operands>
     Mov parseMov(const Operands &operands)
     {
+        if(operands.size() != 2)
+        {
+            throw std::runtime_error(
+            fmt::format("Wrong number of operands, got {}, expected {}.", operands.size(), 2));
+        }
         return Mov{ parseRegister(operands[0]), parseImmediateValue(operands[1]) };
     }
 
