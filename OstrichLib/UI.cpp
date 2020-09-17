@@ -23,8 +23,8 @@ namespace ostrich
 
     void UI::render() const
     {
-        std::vector<char> buffer_owner((m_width * m_height) + 1, ' ');
-        buffer_owner.at(m_width * m_height) = '\0';
+        std::vector<char> buffer_owner((m_width * (m_height - 1)) + 1, ' ');
+        buffer_owner.at(m_width * (m_height - 1)) = '\0';
         char *buf = buffer_owner.data();
 
         // Source
@@ -50,15 +50,25 @@ namespace ostrich
             std::copy(s.c_str(), s.c_str() + s.size(), &(buf[m_width * i + m_width - 14]));
         }
         std::cout << buf;
+        std::cout << "(ostrich) ";
     }
 
     void UI::mainLoop()
     {
+        std::string previousCommand;
         while(m_vm.cpu().nextInstruction() < m_vm.source().size())
         {
+            std::string command;
             render();
-            std::cin.get();
-            m_vm.step();
+            std::getline(std::cin, command);
+            if(!command.empty())
+            {
+                previousCommand = command;
+            }
+            if(previousCommand == "s" || previousCommand == "step")
+            {
+                m_vm.step();
+            }
         }
         render();
     }
