@@ -50,7 +50,8 @@ TEST_CASE("Add")
 
 TEST_CASE("Mov")
 {
-    checkInstruction(Mov{ .destination = rbx, .value = 0xff }, parseInstruction("mov rbx ff"));
+    checkInstruction(Mov{ .destination = rbx, .value = 0xff }, parseInstruction("mov rbx 0xff"));
+    checkInstruction(Mov{ .destination = rbx, .value = 10 }, parseInstruction("mov rbx 10"));
 }
 
 TEST_CASE("Unknown instructions or empty source lines")

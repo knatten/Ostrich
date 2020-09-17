@@ -35,7 +35,7 @@ namespace ostrich
 
     std::string Mov::toString() const
     {
-        return fmt::format("mov  {0} {1:X}", ostrich::toString(destination), value);
+        return fmt::format("mov  {0} 0x{1:X}", ostrich::toString(destination), value);
     }
 
 } // namespace ostrich

@@ -49,6 +49,12 @@ namespace ostrich
         throw std::runtime_error(fmt::format("Unknown register name '{}'", reg));
     }
 
+    uint64_t parseImmediateValue(const std::string_view &value)
+    {
+        return value.starts_with("0x") ? std::stoull(std::string(value), 0, 16) :
+                                         std::stoull(std::string(value));
+    }
+
     // TODO constrain that Operands is ForwardIterator of string_view (or "something stringish" if that concept exist)
     template <InstructionSingleRegisterOperand InstructionType, typename Operands>
     InstructionType parseInstructionWithSingleRegister(const Operands &operands)
@@ -68,7 +74,7 @@ namespace ostrich
     Mov parseMov(const Operands &operands)
     {
         // TODO support leading "0x", then parse as hex, otherwise parse as base 10
-        return Mov{ parseRegister(operands[0]), std::stoull(std::string(operands[1]), 0, 16) };
+        return Mov{ parseRegister(operands[0]), parseImmediateValue(operands[1]) };
     }
 
     Instruction parseInstruction(const std::string_view &sourceLine)
