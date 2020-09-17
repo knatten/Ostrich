@@ -9,16 +9,16 @@ using namespace ostrich;
 TEST_CASE("Initialization happy path")
 {
     Stack s{ 10, 0xff };
-    CHECK(s.top() == 0xff);
+    CHECK(s.beginning() == 0xff);
 
     CHECK_THAT(s.content(), Equals(std::vector<uint8_t>(10, 0)));
 
     Stack zeroSizeIsOk{ 0, 0 };
 }
 
-void makeStack(uint64_t size, uint64_t top)
+void makeStack(uint64_t size, uint64_t beginning)
 {
-    Stack s{ size, top };
+    Stack s{ size, beginning };
 }
 
 TEST_CASE("Stack fits below the start address")

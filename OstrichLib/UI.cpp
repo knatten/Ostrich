@@ -50,9 +50,9 @@ namespace ostrich
         const size_t maxHeight{ m_height - 1 };
         for(size_t i = 0; i < stack.size(); ++i)
         {
-            const auto stackPointer{ m_vm.stack().top() - i == m_vm.cpu().registerValue(RegisterName::rsp) ? '>' : ' ' };
+            const auto stackPointer{ m_vm.stack().beginning() - i == m_vm.cpu().registerValue(RegisterName::rsp) ? '>' : ' ' };
             const auto s =
-            fmt::format("{0}{1:04X}: {2:02X}", stackPointer, m_vm.stack().top() - i, stack[i]);
+            fmt::format("{0}{1:04X}: {2:02X}", stackPointer, m_vm.stack().beginning() - i, stack[i]);
             const size_t row{ i % maxHeight };
             const size_t col{ i / maxHeight };
             std::copy(s.c_str(), s.c_str() + s.size(), &(buf[m_width * row + m_width - 26 + col * 12]));

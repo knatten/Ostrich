@@ -9,13 +9,13 @@ module Ostrich;
 
 namespace ostrich
 {
-    Stack::Stack(uint64_t size, uint64_t top) : m_size{ size }, m_top{ top }, m_content(m_size, 0)
+    Stack::Stack(uint64_t size, uint64_t beginning) : m_size{ size }, m_beginning{ beginning }, m_content(m_size, 0)
     {
-        if(top + 1 < size)
+        if(beginning + 1 < size)
         {
             throw std::runtime_error(
             fmt::format("Stack is {} big, so beginning must be at least {}. {} is too small.", size,
-                        size - 1, top));
+                        size - 1, beginning));
         }
     }
 
@@ -24,18 +24,18 @@ namespace ostrich
         return m_content;
     }
 
-    uint64_t Stack::top() const
+    uint64_t Stack::beginning() const
     {
-        return m_top;
+        return m_beginning;
     }
 
     void Stack::store(uint64_t address, uint64_t value)
     {
-        if(address > m_top)
+        if(address > m_beginning)
         {
             throw std::runtime_error("Stack underflow!");
         }
-        const size_t lsb_index = m_top - address + 7;
+        const size_t lsb_index = m_beginning - address + 7;
         if(lsb_index >= m_content.size())
         {
             throw std::runtime_error("Stack overflow! (No, not that website)");
@@ -50,18 +50,18 @@ namespace ostrich
 
     uint64_t Stack::load(uint64_t address)
     {
-        if(address > m_top)
+        if(address > m_beginning)
         {
             throw std::runtime_error("Stack underflow!");
         }
-        if(m_top - address + 8 > m_content.size())
+        if(m_beginning - address + 8 > m_content.size())
         {
             throw std::runtime_error("Stack overflow! (No, not that website)");
         }
         uint64_t result{ 0 };
         for(uint64_t i = 0; i < 8; ++i)
         {
-            const size_t index{ m_top - address + i };
+            const size_t index{ m_beginning - address + i };
             result += m_content.at(index);
             if(i < 7)
             {

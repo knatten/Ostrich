@@ -111,16 +111,16 @@ namespace ostrich
     export class Stack
     {
     public:
-        Stack(uint64_t size, uint64_t top);
+        Stack(uint64_t size, uint64_t beginning);
 
         const std::vector<uint8_t> content() const;
-        uint64_t top() const;
+        uint64_t beginning() const;
         void store(uint64_t address, uint64_t value);
         uint64_t load(uint64_t addres);
 
     private:
         uint64_t m_size;
-        uint64_t m_top; //TODO rename this and variables called top to beginning or something
+        uint64_t m_beginning;
         std::vector<uint8_t> m_content;
     };
 

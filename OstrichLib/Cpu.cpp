@@ -21,7 +21,7 @@ namespace ostrich
         {
             m_registers[i] = Register{ static_cast<RegisterName>(i), 0 };
         }
-        registerValue(RegisterName::rsp) = stack.top();
+        registerValue(RegisterName::rsp) = stack.beginning();
     }
 
     void Cpu::step()
