@@ -30,7 +30,7 @@ namespace ostrich
 
     std::string Pop::toString() const
     {
-        return "pop " + ostrich::toString(registerName);
+        return "pop  " + ostrich::toString(registerName);
     }
 
     std::string Mov::toString() const
