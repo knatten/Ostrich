@@ -62,25 +62,37 @@ namespace ostrich
             std::string command;
             render();
             std::getline(std::cin, command);
-            if(!command.empty())
+            try
             {
-                previousCommand = command;
+                if(!command.empty())
+                {
+                    previousCommand = command;
+                }
+                if(previousCommand == "s" || previousCommand == "step")
+                {
+                    m_vm.step();
+                }
+                if(previousCommand == "q" || previousCommand == "quit")
+                {
+                    return;
+                }
+                if(previousCommand.starts_with("load"))
+                {
+                    m_vm.load(parse(std::filesystem::path(split(previousCommand, ' ')[1])));
+                }
+                if(previousCommand.starts_with("'"))
+                {
+                    m_vm.execute(parseInstruction(previousCommand.substr(1)));
+                }
+                else
+                {
+                    throw std::runtime_error(fmt::format("Syntax error: '{}'", previousCommand));
+                }
             }
-            if(previousCommand == "s" || previousCommand == "step")
+            catch(const std::exception& e)
             {
-                m_vm.step();
-            }
-            if(previousCommand == "q" || previousCommand == "quit")
-            {
-                return;
-            }
-            if(previousCommand.starts_with("load"))
-            {
-                m_vm.load(parse(std::filesystem::path(split(previousCommand, ' ')[1])));
-            }
-            if(previousCommand.starts_with("'"))
-            {
-                m_vm.execute(parseInstruction(previousCommand.substr(1)));
+                std::cout << e.what() << std::endl;
+                std::cin.get();
             }
         }
     }
