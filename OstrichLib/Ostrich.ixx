@@ -120,7 +120,7 @@ namespace ostrich
 
     private:
         uint64_t m_size;
-        uint64_t m_top;
+        uint64_t m_top; //TODO rename this and variables called top to beginning or something
         std::vector<uint8_t> m_content;
     };
 
