@@ -160,8 +160,8 @@ namespace ostrich
         const Source &source() const;
 
     private:
-        uint64_t m_stackSize;
         static constexpr uint64_t stackTop{ 0xffff };
+        uint64_t m_stackSize;
         Stack m_stack{ m_stackSize, stackTop };
         Source m_source;
         Cpu m_cpu{ m_stack, m_source };

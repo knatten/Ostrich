@@ -8,7 +8,7 @@ module Ostrich;
 namespace ostrich
 {
     Vm::Vm(Source source, size_t stackSize)
-    : m_source{ std::move(source) }, m_stackSize{ stackSize }
+    : m_stackSize{ stackSize }, m_source{ std::move(source) }
     {
     }
 
