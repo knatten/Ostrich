@@ -82,7 +82,6 @@ namespace ostrich
     template <typename Operands>
     Mov parseMov(const Operands &operands)
     {
-        // TODO support leading "0x", then parse as hex, otherwise parse as base 10
         return Mov{ parseRegister(operands[0]), parseImmediateValue(operands[1]) };
     }
 
