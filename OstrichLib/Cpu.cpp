@@ -17,7 +17,7 @@ namespace ostrich
 
     Cpu::Cpu(Stack &stack, Source &source) : m_stack(&stack), m_source(&source)
     {
-        reg(RegisterName::rsp) = stack.top();
+        registerValue(RegisterName::rsp) = stack.top();
     }
 
     void Cpu::step()
@@ -33,18 +33,20 @@ namespace ostrich
     void Cpu::execute(const Instruction &instruction)
     {
         std::visit(overloaded{
-                   [this](const Inc &inc) { reg(inc.registerName)++; },
-                   [this](const Dec &dec) { reg(dec.registerName)--; },
-                   [this](const Add &add) { reg(add.destination) += reg(add.source); },
+                   [this](const Inc &inc) { registerValue(inc.registerName)++; },
+                   [this](const Dec &dec) { registerValue(dec.registerName)--; },
+                   [this](const Add &add) {
+                       registerValue(add.destination) += registerValue(add.source);
+                   },
                    [this](const Push &push) {
-                       m_stack->store(reg(RegisterName::rsp), reg(push.registerName));
-                       reg(RegisterName::rsp) -= 8;
+                       m_stack->store(registerValue(RegisterName::rsp), registerValue(push.registerName));
+                       registerValue(RegisterName::rsp) -= 8;
                    },
                    [this](const Pop &pop) {
-                       reg(pop.registerName) = m_stack->load(reg(RegisterName::rsp) + 8);
-                       reg(RegisterName::rsp) += 8;
+                       registerValue(pop.registerName) = m_stack->load(registerValue(RegisterName::rsp) + 8);
+                       registerValue(RegisterName::rsp) += 8;
                    },
-                   [this](const Mov &mov) { reg(mov.destination) = mov.value; },
+                   [this](const Mov &mov) { registerValue(mov.destination) = mov.value; },
                    },
                    instruction);
     }
@@ -58,7 +60,7 @@ namespace ostrich
         return m_registers;
     }
 
-    const uint64_t &Cpu::reg(RegisterName r) const
+    const uint64_t &Cpu::registerValue(RegisterName r) const
     {
         return std::find_if(m_registers.begin(), m_registers.end(),
                             [&](const auto reg) { return reg.registerName == r; })
@@ -66,9 +68,9 @@ namespace ostrich
         throw std::runtime_error("No such register");
     }
 
-    uint64_t &Cpu::reg(RegisterName r)
+    uint64_t &Cpu::registerValue(RegisterName r)
     {
-        return const_cast<uint64_t &>(const_cast<const Cpu &>(*this).reg(r));
+        return const_cast<uint64_t &>(const_cast<const Cpu &>(*this).registerValue(r));
     }
 
     void Vm::step()

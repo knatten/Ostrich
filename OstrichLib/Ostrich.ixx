@@ -141,15 +141,15 @@ namespace ostrich
         size_t nextInstruction() const;
         const std::array<Register, 3> registers() const;
 
-        const uint64_t &reg(RegisterName r) const; //TODO rename this and other overload to registerValue
+        const uint64_t &registerValue(RegisterName r) const;
 
     private:
-        uint64_t &reg(RegisterName r);
+        uint64_t &registerValue(RegisterName r);
 
         Stack *m_stack;
         Source *m_source;
         size_t m_nextInstruction{ 0 };
-        std::array<Register,3> m_registers{ initRegisters() };
+        std::array<Register, 3> m_registers{ initRegisters() };
     };
 
     // Vm
