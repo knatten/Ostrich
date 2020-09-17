@@ -1,3 +1,4 @@
+#include <filesystem>
 #include <iostream>
 #include <string_view>
 
@@ -9,17 +10,25 @@ void print(const std::string_view &s)
     std::cin.get();
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-    const char *source = "mov rax 0xfedcba9876543210\n"
-                         "push rax\n"
-                         "pop rbx\n"
-                         "mov rbx 0x111\n"
-                         "add rax rbx\n"
-                         "push rax\n"
-                         "dec rbx\n";
-    ostrich::Vm vm{ ostrich::parse(source) };
-    ostrich::UI ui(120, 30, vm);
-    ui.mainLoop();
-    std::cin.get();
+    try
+    {
+
+        std::cout << argc << std::endl;
+        ostrich::Vm vm{ argc == 2 ? ostrich::parse(std::filesystem::path(argv[1])) :
+                                    ostrich::parse(std::string_view("")) };
+        ostrich::UI ui(120, 30, vm);
+        ui.mainLoop();
+    }
+    catch(std::exception &e)
+    {
+        std::cerr << "Exception " << e.what() << std::endl;
+        return 1;
+    }
+    catch(...)
+    {
+        std::cerr << "Unknown exception" << std::endl;
+        return 1;
+    }
 }

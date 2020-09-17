@@ -75,5 +75,6 @@ namespace ostrich
             }
         }
         render();
+        std::cin.get();
     }
 } // namespace ostrich

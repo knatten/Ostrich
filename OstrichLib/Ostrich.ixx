@@ -1,5 +1,6 @@
 module;
 
+#include <filesystem>
 #include <ostream>
 #include <string>
 #include <variant>
@@ -159,6 +160,7 @@ namespace ostrich
     // Parser
     export Instruction parseInstruction(const std::string_view &sourceLine);
     export Source parse(const std::string_view &sourceText);
+    export Source parse(const std::filesystem::path &sourcePath);
 
     // UI
     export class UI

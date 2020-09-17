@@ -3,6 +3,7 @@ module;
 #include <fmt/core.h>
 
 #include <algorithm>
+#include <fstream>
 #include <ranges>
 #include <stdexcept>
 #include <string_view>
@@ -116,6 +117,24 @@ namespace ostrich
         Source source;
         const auto lines = split(sourceText, '\n');
         for(const auto &line : lines)
+        {
+            source.push_back(parseInstruction(line));
+        }
+        return source;
+    }
+
+    Source parse(const std::filesystem::path &sourcePath)
+    {
+        Source source;
+        std::ifstream file(sourcePath.string());
+        auto f = sourcePath.filename();
+        auto p = sourcePath.parent_path();
+        if(!file.is_open())
+        {
+            throw std::runtime_error(fmt::format("Failed to open '{}'", sourcePath.string()));
+        }
+        std::string line;
+        while(std::getline(file, line))
         {
             source.push_back(parseInstruction(line));
         }

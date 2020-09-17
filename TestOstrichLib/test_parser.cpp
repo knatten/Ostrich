@@ -61,9 +61,9 @@ TEST_CASE("Unknown instructions or empty source lines")
 
 TEST_CASE("Parsing full source")
 {
-    CHECK(parse("").empty());
-    CHECK(Instruction{ Inc{ rax } } == parse("inc rax").at(0));
-    CHECK(Instruction{ Mov{ rbx, 2 } } == parse("mov rbx 2").at(0));
-    CHECK_THAT(parse("inc rax\ndec rbx"),
+    CHECK(parse(std::string_view("")).empty());
+    CHECK(Instruction{ Inc{ rax } } == parse(std::string_view("inc rax")).at(0));
+    CHECK(Instruction{ Mov{ rbx, 2 } } == parse(std::string_view("mov rbx 2")).at(0));
+    CHECK_THAT(parse(std::string_view("inc rax\ndec rbx")),
                Equals(std::vector{ Instruction{ Inc{ rax } }, Instruction{ Dec{ rbx } } }));
 }
