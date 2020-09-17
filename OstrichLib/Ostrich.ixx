@@ -129,6 +129,7 @@ namespace ostrich
     {
     public:
         Cpu(Stack &stack, Source &source);
+        Cpu(Stack &stack, Source &source, size_t nextInstruction, std::array<Register, registerCount> registers);
 
         void step();
         void execute(const Instruction &instruction);
@@ -151,6 +152,9 @@ namespace ostrich
     {
     public:
         Vm(Source source, size_t stackSize);
+        Vm(const Vm &other);
+        friend void swap(Vm& lhs, Vm &rhs) noexcept;
+        Vm &operator=(Vm other) noexcept;
 
         void load(Source source);
         void step();

@@ -1,5 +1,6 @@
 module;
 
+#include <array>
 #include <stdexcept>
 #include <variant>
 module Ostrich;
@@ -22,6 +23,11 @@ namespace ostrich
             m_registers[i] = Register{ static_cast<RegisterName>(i), 0 };
         }
         registerValue(RegisterName::rsp) = stack.beginning();
+    }
+
+    Cpu::Cpu(Stack &stack, Source &source, size_t nextInstruction, std::array<Register, registerCount> registers)
+    : m_stack{ &stack }, m_source{ &source }, m_nextInstruction{ nextInstruction }, m_registers{ std::move(registers) }
+    {
     }
 
     void Cpu::step()
