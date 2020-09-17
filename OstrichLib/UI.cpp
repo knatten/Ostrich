@@ -56,7 +56,7 @@ namespace ostrich
     void UI::mainLoop()
     {
         std::string previousCommand;
-        while(m_vm.cpu().nextInstruction() < m_vm.source().size())
+        while(true)
         {
             std::string command;
             render();
@@ -78,7 +78,5 @@ namespace ostrich
                 m_vm.load( parse(std::filesystem::path(split(previousCommand, ' ')[1])));
             }
         }
-        render();
-        std::cin.get();
     }
 } // namespace ostrich

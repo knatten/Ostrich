@@ -20,6 +20,10 @@ namespace ostrich
 
     void Cpu::step()
     {
+        if(m_nextInstruction == m_source->size())
+        {
+            return;
+        }
         execute((*m_source)[m_nextInstruction]);
         m_nextInstruction++;
     }
