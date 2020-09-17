@@ -3,6 +3,7 @@ module;
 #include <fmt/core.h>
 
 #include <iostream>
+#include <ranges>
 #include <string>
 #include <variant>
 module Ostrich;
@@ -76,6 +77,10 @@ namespace ostrich
             if(previousCommand.starts_with("load"))
             {
                 m_vm.load(parse(std::filesystem::path(split(previousCommand, ' ')[1])));
+            }
+            if(previousCommand.starts_with("'"))
+            {
+                m_vm.execute(parseInstruction(previousCommand.substr(1)));
             }
         }
     }

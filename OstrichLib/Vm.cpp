@@ -18,6 +18,11 @@ namespace ostrich
         m_cpu = Cpu{ m_stack, m_source };
     }
 
+    void Vm::execute(const Instruction &instruction)
+    {
+        m_cpu.execute(instruction);
+    }
+
     const Stack &Vm::stack() const
     {
         return m_stack;

@@ -123,6 +123,7 @@ namespace ostrich
         Cpu(Stack &stack, Source &source);
 
         void step();
+        void execute(const Instruction &instruction);
         size_t nextInstruction() const;
 
         uint64_t rax() const;
@@ -131,7 +132,6 @@ namespace ostrich
 
     private:
         uint64_t &reg(RegisterName r);
-        void execute(const Instruction &instruction);
 
         Stack *m_stack;
         Source *m_source;
@@ -149,6 +149,7 @@ namespace ostrich
 
         void load(Source source);
         void step();
+        void execute(const Instruction &instruction);
         const Cpu &cpu() const;
         const Stack &stack() const;
         const Source &source() const;
