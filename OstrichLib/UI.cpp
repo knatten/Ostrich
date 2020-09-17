@@ -64,34 +64,44 @@ namespace ostrich
             std::getline(std::cin, command);
             try
             {
-                if(!command.empty())
+                if(command.empty())
                 {
-                    previousCommand = command;
+                    if(!previousCommand.empty())
+                    {
+                        command = previousCommand;
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
-                if(previousCommand == "s" || previousCommand == "step")
+
+                if(command == "s" || command == "step")
                 {
                     m_vm.step();
                 }
-                if(previousCommand == "q" || previousCommand == "quit")
+                else if(command == "q" || command == "quit")
                 {
                     return;
                 }
-                if(previousCommand.starts_with("load"))
+                else if(command.starts_with("load"))
                 {
-                    m_vm.load(parse(std::filesystem::path(split(previousCommand, ' ')[1])));
+                    m_vm.load(parse(std::filesystem::path(split(command, ' ')[1])));
                 }
-                if(previousCommand.starts_with("'"))
+                else if(command.starts_with("'"))
                 {
-                    m_vm.execute(parseInstruction(previousCommand.substr(1)));
+                    m_vm.execute(parseInstruction(command.substr(1)));
                 }
                 else
                 {
-                    throw std::runtime_error(fmt::format("Syntax error: '{}'", previousCommand));
+                    throw std::runtime_error(fmt::format("Syntax error: '{}'", command));
                 }
+                previousCommand = command;
             }
-            catch(const std::exception& e)
+            catch(const std::exception &e)
             {
                 std::cout << e.what() << std::endl;
+                previousCommand = "";
                 std::cin.get();
             }
         }
