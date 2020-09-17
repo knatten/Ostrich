@@ -86,14 +86,14 @@ namespace ostrich
         return lhs.destination == rhs.destination && lhs.value == rhs.value;
     }
 
-    export template<InstructionAny I>
-    std::ostream &operator<<(std::ostream& os, I instruction)
+    export template <InstructionAny I>
+    std::ostream &operator<<(std::ostream &os, I instruction)
     {
         os << instruction.toString();
         return os;
     }
 
-    export std::ostream &operator<<(std::ostream& os, Instruction instruction)
+    export std::ostream &operator<<(std::ostream &os, Instruction instruction)
     {
         os << std::visit([](const auto &i) { return i.toString(); }, instruction);
         return os;
