@@ -133,8 +133,8 @@ namespace ostrich
         uint64_t &reg(RegisterName r);
         void execute(const Instruction &instruction);
 
-        Stack &m_stack;
-        Source &m_source;
+        Stack *m_stack;
+        Source *m_source;
         size_t m_nextInstruction{ 0 };
         uint64_t m_rax{ 0 };
         uint64_t m_rbx{ 0 };
@@ -146,21 +146,27 @@ namespace ostrich
     {
     public:
         Vm(Source source);
+
+        void load(Source source);
         void step();
         const Cpu &cpu() const;
         const Stack &stack() const;
         const Source &source() const;
 
     private:
-        Stack m_stack{ 16, 0xffff };
-        Cpu m_cpu{ m_stack, m_source };
+        static constexpr uint64_t stackSize{ 16 };
+        static constexpr uint64_t stackTop{ 0xffff };
+        Stack m_stack{ stackSize, stackTop };
         Source m_source;
+        Cpu m_cpu{ m_stack, m_source };
     };
 
     // Parser
     export Instruction parseInstruction(const std::string_view &sourceLine);
     export Source parse(const std::string_view &sourceText);
     export Source parse(const std::filesystem::path &sourcePath);
+    // split_view is not implemented yet, so I stole https://www.bfilipek.com/2018/07/string-view-perf-followup.html
+    std::vector<std::string_view> split(const std::string_view &sourceLine, const char delimiter);
 
     // UI
     export class UI

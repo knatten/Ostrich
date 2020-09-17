@@ -12,7 +12,6 @@ module Ostrich;
 
 namespace ostrich
 {
-    // split_view is not implemented yet, so I stole https://www.bfilipek.com/2018/07/string-view-perf-followup.html
     std::vector<std::string_view> split(const std::string_view &sourceLine, const char delimiter)
     {
         std::vector<std::string_view> output;

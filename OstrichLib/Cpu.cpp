@@ -14,13 +14,13 @@ namespace ostrich
     template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
     Cpu::Cpu(Stack &stack, Source &source)
-    : m_stack(stack), m_source(source), m_rsp{ stack.top() }
+    : m_stack(&stack), m_source(&source), m_rsp{ stack.top() }
     {
     }
 
     void Cpu::step()
     {
-        execute(m_source[m_nextInstruction]);
+        execute((*m_source)[m_nextInstruction]);
         m_nextInstruction++;
     }
 
@@ -31,11 +31,11 @@ namespace ostrich
                    [this](const Dec &dec) { reg(dec.registerName)--; },
                    [this](const Add &add) { reg(add.destination) += reg(add.source); },
                    [this](const Push &push) {
-                       m_stack.store(m_rsp, reg(push.registerName));
+                       m_stack->store(m_rsp, reg(push.registerName));
                        m_rsp -= 8;
                    },
                    [this](const Pop &pop) {
-                       reg(pop.registerName) = m_stack.load(m_rsp + 8);
+                       reg(pop.registerName) = m_stack->load(m_rsp + 8);
                        m_rsp += 8;
                    },
                    [this](const Mov &mov) { reg(mov.destination) = mov.value; },

@@ -73,6 +73,10 @@ namespace ostrich
             {
                 return;
             }
+            if(previousCommand.starts_with("load"))
+            {
+                m_vm.load( parse(std::filesystem::path(split(previousCommand, ' ')[1])));
+            }
         }
         render();
         std::cin.get();

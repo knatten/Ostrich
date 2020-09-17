@@ -11,6 +11,13 @@ namespace ostrich
     {
     }
 
+    void Vm::load(Source source)
+    {
+        m_stack = Stack{ stackSize, stackTop };
+        m_source = std::move(source);
+        m_cpu = Cpu{ m_stack, m_source };
+    }
+
     const Stack &Vm::stack() const
     {
         return m_stack;
