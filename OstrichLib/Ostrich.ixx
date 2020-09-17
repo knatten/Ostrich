@@ -145,7 +145,7 @@ namespace ostrich
     export class Vm
     {
     public:
-        Vm(Source source);
+        Vm(Source source, size_t stackSize);
 
         void load(Source source);
         void step();
@@ -155,9 +155,9 @@ namespace ostrich
         const Source &source() const;
 
     private:
-        static constexpr uint64_t stackSize{ 16 };
+        uint64_t m_stackSize;
         static constexpr uint64_t stackTop{ 0xffff };
-        Stack m_stack{ stackSize, stackTop };
+        Stack m_stack{ m_stackSize, stackTop };
         Source m_source;
         Cpu m_cpu{ m_stack, m_source };
     };

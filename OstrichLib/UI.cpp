@@ -45,10 +45,13 @@ namespace ostrich
 
         // Stack
         const auto &stack = m_vm.stack().content();
+        const size_t maxHeight{ m_height - 1 };
         for(size_t i = 0; i < stack.size(); ++i)
         {
             const auto s = fmt::format("{0:04X}: {1:02X}", m_vm.stack().top() - i, stack[i]);
-            std::copy(s.c_str(), s.c_str() + s.size(), &(buf[m_width * i + m_width - 14]));
+            const size_t row{ i % maxHeight};
+            const size_t col{ i / maxHeight };
+            std::copy(s.c_str(), s.c_str() + s.size(), &(buf[m_width * row + m_width - 24 + col * 10]));
         }
         std::cout << buf;
         std::cout << "(ostrich) ";
