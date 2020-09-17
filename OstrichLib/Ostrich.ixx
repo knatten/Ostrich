@@ -12,6 +12,7 @@ namespace ostrich
 {
     // Registers
     export enum class RegisterName { rax, rbx, rsp };
+    constexpr size_t registerCount{ 3 };
     std::string toString(RegisterName registerName);
 
     export struct Register
@@ -123,13 +124,6 @@ namespace ostrich
         std::vector<uint8_t> m_content;
     };
 
-    constexpr std::array<Register, 3> initRegisters()
-    {
-        using enum RegisterName;
-        // TODO niceify with ranges or something?
-        return { Register{ rax, 0 }, Register{ rbx, 0 }, Register{ rsp, 0 } };
-    }
-
     // Cpu
     export class Cpu
     {
@@ -149,7 +143,7 @@ namespace ostrich
         Stack *m_stack;
         Source *m_source;
         size_t m_nextInstruction{ 0 };
-        std::array<Register, 3> m_registers{ initRegisters() };
+        std::array<Register, registerCount> m_registers;
     };
 
     // Vm

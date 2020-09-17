@@ -17,6 +17,10 @@ namespace ostrich
 
     Cpu::Cpu(Stack &stack, Source &source) : m_stack(&stack), m_source(&source)
     {
+        for(size_t i = 0; i < registerCount; ++i)
+        {
+            m_registers[i] = Register{ static_cast<RegisterName>(i), 0 };
+        }
         registerValue(RegisterName::rsp) = stack.top();
     }
 
