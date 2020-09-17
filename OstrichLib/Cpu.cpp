@@ -7,11 +7,13 @@ module Ostrich;
 
 namespace ostrich
 {
-    template <class... Ts> struct overloaded : Ts...
+    template <class... Ts>
+    struct overloaded : Ts...
     {
         using Ts::operator()...;
     };
-    template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+    template <class... Ts>
+    overloaded(Ts...) -> overloaded<Ts...>;
 
     Cpu::Cpu(Stack &stack, Source &source)
     : m_stack(&stack), m_source(&source), m_rsp{ stack.top() }
