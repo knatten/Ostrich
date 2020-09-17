@@ -69,6 +69,10 @@ namespace ostrich
             {
                 m_vm.step();
             }
+            if(previousCommand == "q" || previousCommand == "quit")
+            {
+                return;
+            }
         }
         render();
     }
