@@ -34,7 +34,7 @@ namespace ostrich
             const auto &instruction = m_vm.source()[i];
             // TODO these two lines are a mess, should be a function
             const auto s = std::visit([](const auto &i) { return i.toString(); }, instruction);
-            const auto s2 = (i == m_vm.cpu().nextInstruction() ? "*" : " ") + s;
+            const auto s2 = (i == m_vm.cpu().nextInstruction() ? ">" : " ") + s;
             std::copy(s2.c_str(), s2.c_str() + s2.size(), &(buf[m_width * i + 5]));
         }
 
