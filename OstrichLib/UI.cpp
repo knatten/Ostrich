@@ -50,7 +50,9 @@ namespace ostrich
         const size_t maxHeight{ m_height - 1 };
         for(size_t i = 0; i < stack.size(); ++i)
         {
-            const auto stackPointer{ m_vm.stack().beginning() - i == m_vm.cpu().registerValue(RegisterName::rsp) ? '>' : ' ' };
+            const auto stackPointer{
+                m_vm.stack().beginning() - i == m_vm.cpu().registerValue(RegisterName::rsp) ? '>' : ' '
+            };
             const auto s =
             fmt::format("{0}{1:04X}: {2:02X}", stackPointer, m_vm.stack().beginning() - i, stack[i]);
             const size_t row{ i % maxHeight };
@@ -91,7 +93,7 @@ namespace ostrich
                 {
                     return;
                 }
-                else if(command.starts_with("load"))
+                else if(command.starts_with("l ") || command.starts_with("load"))
                 {
                     m_vm.load(parse(std::filesystem::path(split(command, ' ')[1])));
                 }
@@ -102,6 +104,17 @@ namespace ostrich
                 else if(command == "b" || command == "back")
                 {
                     m_vm.restorePreviousState();
+                }
+                else if(command == "h" || command == "help" || command == "?")
+                {
+                    std::cout << "s / step              Step one instruction forward\n"
+                              << "b / back              Step one instruction back\n"
+                              << "l / load <filename>   Load new source from <filename>\n"
+                              << "'<instruction>      Interpret and execute <instruction>\n"
+                              << "h / help              Print this help\n"
+                              << "q / quit              Quit\n\n"
+                              << "(press any key)";
+                    std::cin.get();
                 }
                 else
                 {
