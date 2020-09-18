@@ -110,7 +110,7 @@ namespace ostrich
                     std::cout << "s / step              Step one instruction forward\n"
                               << "b / back              Step one instruction back\n"
                               << "l / load <filename>   Load new source from <filename>\n"
-                              << "'<instruction>      Interpret and execute <instruction>\n"
+                              << "'<instruction>        Interpret and execute <instruction>\n"
                               << "h / help              Print this help\n"
                               << "q / quit              Quit\n\n"
                               << "(press any key)";
