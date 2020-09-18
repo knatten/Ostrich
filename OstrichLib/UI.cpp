@@ -99,6 +99,10 @@ namespace ostrich
                 {
                     m_vm.execute(parseInstruction(command.substr(1)));
                 }
+                else if(command == "b" || command == "back")
+                {
+                    m_vm.restorePreviousState();
+                }
                 else
                 {
                     throw std::runtime_error(fmt::format("Syntax error: '{}'", command));

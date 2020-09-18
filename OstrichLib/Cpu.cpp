@@ -83,14 +83,4 @@ namespace ostrich
         return const_cast<uint64_t &>(const_cast<const Cpu &>(*this).registerValue(r));
     }
 
-    void Vm::step()
-    {
-        m_cpu.step();
-    }
-
-    const Cpu &Vm::cpu() const
-    {
-        return m_cpu;
-    };
-
 } // namespace ostrich

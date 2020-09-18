@@ -152,24 +152,37 @@ namespace ostrich
     {
     public:
         Vm(Source source, size_t stackSize);
-        Vm(const Vm &other);
-        friend void swap(Vm& lhs, Vm &rhs) noexcept;
-        Vm &operator=(Vm other) noexcept;
 
         void load(Source source);
         void step();
         void execute(const Instruction &instruction);
+        void restorePreviousState();
         const Cpu &cpu() const;
         const Stack &stack() const;
         const Source &source() const;
 
+        class State // TODO make this private and members private and declare swap a friend
+        {
+        public:
+            State(Source source, size_t stackSize);
+            State(const State &other);
+            State &operator=(State other) noexcept;
+
+            Stack m_stack;
+            Source m_source;
+            Cpu m_cpu{ m_stack, m_source };
+        };
+
     private:
+        State &state();
+        const State &state() const;
+        void saveState();
+
         static constexpr uint64_t stackTop{ 0xffff };
-        uint64_t m_stackSize;
-        Stack m_stack{ m_stackSize, stackTop };
-        Source m_source;
-        Cpu m_cpu{ m_stack, m_source };
+        std::vector<State> m_states;
     };
+
+    void swap(Vm::State &lhs, Vm::State &rhs) noexcept;
 
     // Parser
     export Instruction parseInstruction(const std::string_view &sourceLine);
