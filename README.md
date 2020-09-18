@@ -1,12 +1,10 @@
-### Ostrich x86_64 emulator
-Just a toy project to check out C++20 by making a toy x86 emulator
+## Ostrich x86_64 emulator / debugger
+Just a toy x86_64 emulator / debugger with time travelling and an assembly interpreter.
+
+Note that this only builds on the latest MSVC.
+
+I haven't implemented a lot of instructions yet, but what is here should work, the tests pass etc. The code should be fairly clean, modulo some TODOs.
 
 ### Ostrich?
 
 It doesn't really qualify as an emu(lator), it's more of an ostrich. And I'm sticking my head in the sand a lot.
-
-### What C++20 is there here?
-
-- Modules
-- using enum
-- designated initializers
