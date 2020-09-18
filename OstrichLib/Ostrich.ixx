@@ -11,8 +11,8 @@ export module Ostrich;
 namespace ostrich
 {
     // Registers
-    export enum class RegisterName { rax, rbx, rcx, rdx, rsp };
-    constexpr size_t registerCount{ 5 };
+    export enum class RegisterName { rax, rbx, rcx, rdx, rsi, rdi, rbp, rsp };
+    constexpr size_t registerCount{ 8 };
     std::string toString(RegisterName registerName);
 
     export struct Register

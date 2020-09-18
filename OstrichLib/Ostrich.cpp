@@ -20,10 +20,16 @@ namespace ostrich
             return "rcx";
         case rdx:
             return "rdx";
+        case rsi:
+            return "rsi";
+        case rdi:
+            return "rdi";
+        case rbp:
+            return "rbp";
         case rsp:
             return "rsp";
         }
-        static_assert(registerCount == 5, "Don't forget to update this!");
+        static_assert(registerCount == 8, "Don't forget to update this!");
         throw std::runtime_error("No such register");
     }
 } // namespace ostrich
