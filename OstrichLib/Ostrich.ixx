@@ -161,7 +161,9 @@ namespace ostrich
         const Stack &stack() const;
         const Source &source() const;
 
-        class State // TODO make this private and members private and declare swap a friend
+        // TODO make this private and members private and declare swap a friend. Blocked by msvc issue:
+        // https://developercommunity.visualstudio.com/content/problem/1191747/friends-declared-in-nested-classes-dont-work-with.html
+        class State
         {
         public:
             State(Source source, size_t stackSize);
