@@ -39,6 +39,8 @@ TEST_CASE("Instructions with only single register operand")
 TEST_CASE("Add")
 {
     checkInstruction(Add{ .destination = rax, .source = rbx }, parseInstruction("add rax rbx"));
+    checkInstruction(Add{ .destination = rax, .source = 42 }, parseInstruction("add rax 42"));
+    checkInstruction(Add{ .destination = rax, .source = 0x123 }, parseInstruction("add rax 0x123"));
 
     CHECK_THROWS_WITH(parseInstruction("add"),
                       Contains("Wrong number of operands, got 0, expected 2"));

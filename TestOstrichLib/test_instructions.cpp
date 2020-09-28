@@ -41,3 +41,14 @@ TEST_CASE("Can ostream instructions")
     ss2 << Instruction{ Push{ rax } };
     CHECK("push rax" == ss2.str());
 }
+
+TEST_CASE("toString")
+{
+    CHECK("inc  rax" == Inc{ rax }.toString());
+    CHECK("dec  rbx" == Dec{ rbx }.toString());
+    CHECK("add  rcx 0x123" == Add{ rcx, 0x123 }.toString());
+    CHECK("add  rcx 0x1234567" == Add{ rcx, 0x1234567 }.toString());
+    CHECK("add  rcx rax" == Add{ rcx, rax }.toString());
+    CHECK("push rax" == Push{ rax }.toString());
+    CHECK("pop  rbx" == Pop{ rbx }.toString());
+}

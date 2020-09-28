@@ -1,13 +1,30 @@
 module;
 
+#include "Overloaded.h"
+
 #include <fmt/core.h>
 
 #include <string>
+#include <variant>
 
 module Ostrich;
 
 namespace ostrich
 {
+    std::string toString(uint64_t value)
+    {
+        return fmt::format("0x{0:X}", value);
+    }
+
+    std::string toString(RegisterNameOrImmediate rori)
+    {
+        return std::visit(overloaded{
+                          [](const RegisterName name) { return ostrich::toString(name); },
+                          [](const uint64_t value) { return ostrich::toString(value); },
+                          },
+                          rori);
+    }
+
     std::string Inc::toString() const
     {
         return "inc  " + ostrich::toString(registerName);
@@ -35,7 +52,7 @@ namespace ostrich
 
     std::string Mov::toString() const
     {
-        return fmt::format("mov  {0} 0x{1:X}", ostrich::toString(destination), value);
+        return "mov  " + ostrich::toString(destination) + " " + ostrich::toString(value);
     }
 
 } // namespace ostrich

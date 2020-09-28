@@ -7,6 +7,7 @@ module;
 #include <ranges>
 #include <stdexcept>
 #include <string_view>
+#include <variant>
 module Ostrich;
 
 
@@ -80,6 +81,12 @@ namespace ostrich
                                          std::stoull(std::string(value));
     }
 
+    RegisterNameOrImmediate parseRegisterNameOrImmediate(const std::string_view &value)
+    {
+        return std::isdigit(value[0]) ? RegisterNameOrImmediate{ parseImmediateValue(value) } :
+                                        RegisterNameOrImmediate{ parseRegister(value) };
+    }
+
     template <typename T>
     concept OperandList =
     std::forward_iterator<std::ranges::iterator_t<T>> &&std::is_same_v<std::ranges::range_value_t<T>, std::string_view>;
@@ -104,10 +111,10 @@ namespace ostrich
             throw std::runtime_error(
             fmt::format("Wrong number of operands, got {}, expected {}.", operands.size(), 2));
         }
-        return InstructionType{ parseRegister(operands[0]), parseRegister(operands[1]) };
+        return InstructionType{ parseRegister(operands[0]), parseRegisterNameOrImmediate(operands[1]) };
     }
 
-    // TODO delete and use parseInstructionWithSourceAndDestination instead
+     //TODO delete and use parseInstructionWithSourceAndDestination instead
     template <typename Operands>
     Mov parseMov(const Operands &operands)
     {

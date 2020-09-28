@@ -160,6 +160,9 @@
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="Vm.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Overloaded.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

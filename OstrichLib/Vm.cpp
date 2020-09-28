@@ -2,6 +2,7 @@ module;
 
 #include <memory>
 #include <utility>
+#include <variant>
 
 module Ostrich;
 

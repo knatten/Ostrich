@@ -22,6 +22,8 @@ namespace ostrich
     };
 
     // Instructions
+    export using RegisterNameOrImmediate = std::variant<RegisterName, uint64_t>;
+
     export struct Inc
     {
         RegisterName registerName;
@@ -37,7 +39,7 @@ namespace ostrich
     export struct Add
     {
         RegisterName destination;
-        RegisterName source;
+        RegisterNameOrImmediate source;
         std::string toString() const;
     };
 
@@ -140,6 +142,7 @@ namespace ostrich
 
     private:
         uint64_t &registerValue(RegisterName r);
+        uint64_t readValue(RegisterNameOrImmediate r);
 
         Stack *m_stack;
         Source *m_source;

@@ -1,5 +1,7 @@
 module;
 
+#include "Overloaded.h"
+
 #include <array>
 #include <stdexcept>
 #include <variant>
@@ -8,13 +10,6 @@ module Ostrich;
 
 namespace ostrich
 {
-    template <class... Ts>
-    struct overloaded : Ts...
-    {
-        using Ts::operator()...;
-    };
-    template <class... Ts>
-    overloaded(Ts...) -> overloaded<Ts...>;
 
     Cpu::Cpu(Stack &stack, Source &source) : m_stack(&stack), m_source(&source)
     {
@@ -46,7 +41,7 @@ namespace ostrich
                    [this](const Inc &inc) { registerValue(inc.registerName)++; },
                    [this](const Dec &dec) { registerValue(dec.registerName)--; },
                    [this](const Add &add) {
-                       registerValue(add.destination) += registerValue(add.source);
+                       registerValue(add.destination) += readValue(add.source);
                    },
                    [this](const Push &push) {
                        m_stack->store(registerValue(RegisterName::rsp), registerValue(push.registerName));
@@ -81,6 +76,15 @@ namespace ostrich
     uint64_t &Cpu::registerValue(RegisterName r)
     {
         return const_cast<uint64_t &>(const_cast<const Cpu &>(*this).registerValue(r));
+    }
+
+    uint64_t Cpu::readValue(RegisterNameOrImmediate r)
+    {
+        return std::visit(overloaded{
+                   [this](const RegisterName name) { return registerValue(name); },
+                   [this](const uint64_t value) { return value; },
+                   },
+                   r);
     }
 
 } // namespace ostrich
