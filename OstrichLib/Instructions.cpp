@@ -52,7 +52,7 @@ namespace ostrich
 
     std::string Mov::toString() const
     {
-        return "mov  " + ostrich::toString(destination) + " " + ostrich::toString(value);
+        return "mov  " + ostrich::toString(destination) + " " + ostrich::toString(source);
     }
 
 } // namespace ostrich

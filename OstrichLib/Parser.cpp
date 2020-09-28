@@ -114,18 +114,6 @@ namespace ostrich
         return InstructionType{ parseRegister(operands[0]), parseRegisterNameOrImmediate(operands[1]) };
     }
 
-     //TODO delete and use parseInstructionWithSourceAndDestination instead
-    template <typename Operands>
-    Mov parseMov(const Operands &operands)
-    {
-        if(operands.size() != 2)
-        {
-            throw std::runtime_error(
-            fmt::format("Wrong number of operands, got {}, expected {}.", operands.size(), 2));
-        }
-        return Mov{ parseRegister(operands[0]), parseImmediateValue(operands[1]) };
-    }
-
     Instruction parseInstruction(const std::string_view &sourceLine)
     {
         const auto tokens = split(sourceLine, ' ');
@@ -157,7 +145,7 @@ namespace ostrich
         }
         if(instruction == "mov")
         {
-            return parseMov(operands);
+            return parseInstructionWithSourceAndDestination<Mov>(operands);
         }
         else
         {

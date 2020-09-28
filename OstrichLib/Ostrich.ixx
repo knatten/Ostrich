@@ -58,7 +58,7 @@ namespace ostrich
     export struct Mov
     {
         RegisterName destination;
-        uint64_t value;
+        RegisterNameOrImmediate source;
         std::string toString() const;
     };
 
@@ -93,7 +93,7 @@ namespace ostrich
 
     export bool operator==(const Mov &lhs, const Mov &rhs)
     {
-        return lhs.destination == rhs.destination && lhs.value == rhs.value;
+        return lhs.destination == rhs.destination && lhs.source == rhs.source;
     }
 
     export template <InstructionAny I>

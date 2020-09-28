@@ -50,8 +50,9 @@ TEST_CASE("Add")
 
 TEST_CASE("Mov")
 {
-    checkInstruction(Mov{ .destination = rbx, .value = 0xff }, parseInstruction("mov rbx 0xff"));
-    checkInstruction(Mov{ .destination = rbx, .value = 10 }, parseInstruction("mov rbx 10"));
+    checkInstruction(Mov{ .destination = rbx, .source = 0xff }, parseInstruction("mov rbx 0xff"));
+    checkInstruction(Mov{ .destination = rbx, .source = 10 }, parseInstruction("mov rbx 10"));
+    checkInstruction(Mov{ .destination = rbx, .source = rax }, parseInstruction("mov rbx rax"));
 
     CHECK_THROWS_WITH(parseInstruction("mov"),
                       Contains("Wrong number of operands, got 0, expected 2"));

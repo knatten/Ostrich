@@ -51,7 +51,7 @@ namespace ostrich
                        registerValue(pop.registerName) = m_stack->load(registerValue(RegisterName::rsp) + 8);
                        registerValue(RegisterName::rsp) += 8;
                    },
-                   [this](const Mov &mov) { registerValue(mov.destination) = mov.value; },
+                   [this](const Mov &mov) { registerValue(mov.destination) = readValue(mov.source); },
                    },
                    instruction);
     }
