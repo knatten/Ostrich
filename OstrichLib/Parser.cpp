@@ -4,9 +4,11 @@ module;
 
 #include <algorithm>
 #include <fstream>
+#include <limits>
 #include <ranges>
 #include <stdexcept>
 #include <string_view>
+#include <tuple>
 #include <variant>
 module Ostrich;
 
@@ -153,6 +155,116 @@ namespace ostrich
             fmt::format("Failed to parse '{}', instruction '{}' not recognized", sourceLine, instruction));
         }
     };
+
+    // TODO maybe implement more things in terms of parseOut, then we can also detect if there's more stuff left etc.
+
+    std::tuple<AdditiveOperator, std::string_view> parseOutAdditiveOperator(const std::string_view &str)
+    {
+        if(str[0] == '+')
+        {
+            return { AdditiveOperator::plus, str.substr(1) };
+        }
+        if(str[0] == '-')
+        {
+            return { AdditiveOperator::minus, str.substr(1) };
+        }
+        throw std::runtime_error{ fmt::format("Failed to parse additive operator, found '{}'", str) };
+    }
+
+    std::tuple<RegisterName, std::string_view> parseOutRegister(const std::string_view &str)
+    {
+        if(str.size() < 3)
+        {
+            throw std::runtime_error{ fmt::format("Expected a register name, found '{}'", str) };
+        }
+        return { parseRegister(str.substr(0, 3)), str.substr(3) };
+    }
+
+    std::tuple<uint8_t, std::string_view> parseOutUint8t(const std::string_view &str)
+    {
+        std::size_t pos;
+        try
+        {
+            int i = std::stoi(std::string{ str }, &pos);
+            if(i > std::numeric_limits<uint8_t>::max())
+            {
+                throw std::runtime_error{ fmt::format("Expected a number <= {}, but got {}",
+                                                      std::numeric_limits<uint8_t>::max(), i) };
+            }
+            return { static_cast<uint8_t>(i), str.substr(pos) };
+        }
+        catch(const std::exception &e)
+        {
+            throw std::runtime_error{ fmt::format("Failed to parse integer from '{}': {}", str, e.what()) };
+        }
+    }
+
+    std::string_view::size_type firstOfOrEnd(const std::string_view &string, const std::string_view &search)
+    {
+        const auto firstOrEnd = string.find_first_of(search);
+        if(firstOrEnd == std::string_view::npos)
+        {
+            return string.size();
+        }
+        return firstOrEnd;
+    }
+
+    std::string_view peekOrThrow(const std::string_view &str, size_t pos, size_t count = std::string_view::npos)
+    {
+        const auto minLength = pos + (count == std::string_view::npos ? 0 : count);
+        if(minLength >= str.size())
+        {
+            throw std::runtime_error{
+                fmt::format("Unexpected end of input, tried to parse {} characters from '{}'", minLength, str)
+            };
+        }
+        return str.substr(pos, count);
+    }
+
+    std::string_view consumeOrThrow(const std::string_view &str, const std::string_view &expected)
+    {
+        if(!str.starts_with(expected))
+        {
+            throw std::runtime_error{ fmt::format("Expected '{}', found '{}'", expected, str) };
+        }
+        return str.substr(expected.size());
+    }
+
+    MemoryAddress parseMemoryAddress(const std::string_view &memoryAddress)
+    {
+        MemoryAddress memAddress;
+        std::string_view input;
+        // Base
+        std::tie(memAddress.base, input) = parseOutRegister(memoryAddress);
+        // Index
+        if(!input.empty() && !std::isdigit(peekOrThrow(input, 1)[0]))
+        {
+            std::tie(memAddress.indexOperator, input) = parseOutAdditiveOperator(input);
+            const auto hasScale = input[0] == '(';
+            if(hasScale)
+            {
+                input = input.substr(1);
+            }
+            std::tie(memAddress.index, input) = parseOutRegister(input);
+            if(hasScale)
+            {
+                input = consumeOrThrow(input, "*");
+                std::tie(memAddress.scale, input) = parseOutUint8t(input);
+                input = consumeOrThrow(input, ")");
+            }
+        }
+        // Displacement
+        if(!input.empty())
+        {
+            std::tie(memAddress.displacementOperator, input) = parseOutAdditiveOperator(input);
+            std::tie(memAddress.displacement, input) = parseOutUint8t(input);
+        }
+        if(!input.empty())
+        {
+            throw std::runtime_error{ fmt::format("Unexpected trailing characters: '{}'", input) };
+        }
+        return memAddress;
+    }
 
     Source parse(const std::string_view &sourceText)
     {

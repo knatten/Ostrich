@@ -150,6 +150,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="test_cpu.cpp" />
     <ClCompile Include="test_instructions.cpp" />
+    <ClCompile Include="test_memory_address.cpp" />
     <ClCompile Include="test_parser.cpp" />
     <ClCompile Include="test_stack.cpp" />
   </ItemGroup>

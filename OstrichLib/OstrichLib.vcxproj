@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="Cpu.cpp" />
     <ClCompile Include="Instructions.cpp" />
+    <ClCompile Include="MemoryAddress.cpp" />
     <ClCompile Include="Ostrich.ixx" />
     <ClCompile Include="Ostrich.cpp" />
     <ClCompile Include="Parser.cpp" />

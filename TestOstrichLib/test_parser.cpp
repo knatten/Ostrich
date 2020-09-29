@@ -2,6 +2,7 @@
 #include <fmt/core.h>
 
 #include <iostream>
+#include <optional>
 #include <ostream>
 #include <variant>
 
@@ -58,6 +59,29 @@ TEST_CASE("Mov")
                       Contains("Wrong number of operands, got 0, expected 2"));
     CHECK_THROWS_WITH(parseInstruction("mov rax rbx rcx"),
                       Contains("Wrong number of operands, got 3, expected 2"));
+}
+
+TEST_CASE("Memory address")
+{
+    using enum AdditiveOperator;
+    CHECK(MemoryAddress{ rax } == parseMemoryAddress("rax"));
+    CHECK(MemoryAddress{ rbx, plus, std::nullopt, 1, plus, 4 } == parseMemoryAddress("rbx+4"));
+    CHECK(MemoryAddress{ rbx, plus, std::nullopt, 1, minus, 2 } == parseMemoryAddress("rbx-2"));
+    CHECK(MemoryAddress{ rbx, plus, rcx, 1, plus, 0 } == parseMemoryAddress("rbx+rcx"));
+    CHECK(MemoryAddress{ rbx, plus, rdx, 2, plus, 0 } == parseMemoryAddress("rbx+(rdx*2)"));
+    CHECK(MemoryAddress{ rbx, minus, rax, 1, minus, 8 } == parseMemoryAddress("rbx-rax-8"));
+    CHECK(MemoryAddress{ rax, minus, rbx, 4, minus, 2 } == parseMemoryAddress("rax+(rbx*4)-2"));
+
+    //TODO standardize error messages, use Equals
+    CHECK_THROWS_WITH(parseMemoryAddress(""), Contains("Expected a register name"));
+    CHECK_THROWS_WITH(parseMemoryAddress("ra"), Contains("Expected a register name"));
+    CHECK_THROWS_WITH(parseMemoryAddress("raxrbx"), Equals("Failed to parse additive operator, found 'rbx'"));
+    CHECK_THROWS_WITH(parseMemoryAddress("rax+"), Contains("Unexpected end of input"));
+    CHECK_THROWS_WITH(parseMemoryAddress("rax+rbx-"), Contains("Failed to parse integer"));
+    CHECK_THROWS_WITH(parseMemoryAddress("rax+rbx+256"), Equals("Failed to parse integer from '256': Expected a number <= 255, but got 256"));
+    CHECK_THROWS_WITH(parseMemoryAddress("rax+(rbx)"), Equals("Expected '*', found ')'"));
+    CHECK_THROWS_WITH(parseMemoryAddress("rax+(rbx*2"), Equals("Expected ')', found ''"));
+    CHECK_THROWS_WITH(parseMemoryAddress("rax+(rbx*4)-2+2"), Equals("Unexpected trailing characters: '+2'"));
 }
 
 TEST_CASE("Unknown instructions or empty source lines")

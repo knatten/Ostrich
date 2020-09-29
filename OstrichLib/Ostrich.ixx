@@ -2,6 +2,7 @@ module;
 
 #include <array>
 #include <filesystem>
+#include <optional>
 #include <ostream>
 #include <string>
 #include <variant>
@@ -20,6 +21,36 @@ namespace ostrich
         RegisterName registerName;
         uint64_t value;
     };
+
+    // Memory address
+    export enum class AdditiveOperator { plus, minus };
+    export std::string toString(AdditiveOperator additiveOperator);
+
+    export struct MemoryAddress
+    {
+        RegisterName base;
+        AdditiveOperator indexOperator{ AdditiveOperator::plus };
+        std::optional<RegisterName> index{ std::nullopt };
+        uint8_t scale{ 1 };
+        AdditiveOperator displacementOperator{ AdditiveOperator::plus };
+        uint64_t displacement{ 0 };
+
+        std::string toString() const;
+        std::string toShortString() const;
+    };
+
+    export bool operator==(const MemoryAddress &lhs, const MemoryAddress &rhs)
+    {
+        return lhs.base == rhs.base && lhs.index == rhs.index && lhs.scale == rhs.scale &&
+               lhs.displacement == rhs.displacement;
+    }
+
+    export std::ostream &operator<<(std::ostream &os, MemoryAddress memoryAddress)
+    {
+        os << memoryAddress.toString();
+        return os;
+    }
+    //TODO operator<< for more of the types here, then remove calls to toString() in many places
 
     // Instructions
     export using RegisterNameOrImmediate = std::variant<RegisterName, uint64_t>;
@@ -86,6 +117,7 @@ namespace ostrich
         return std::is_same_v<LhsInstruction, RhsInstruction> && lhs.registerName == rhs.registerName;
     }
 
+    // TODO make concept for these and make function template instead of these two functions
     export bool operator==(const Add &lhs, const Add &rhs)
     {
         return lhs.destination == rhs.destination && lhs.source == rhs.source;
@@ -191,6 +223,7 @@ namespace ostrich
 
     // Parser
     export Instruction parseInstruction(const std::string_view &sourceLine);
+    export MemoryAddress parseMemoryAddress(const std::string_view &memoryAddress);
     export Source parse(const std::string_view &sourceText);
     export Source parse(const std::filesystem::path &sourcePath);
     // split_view is not implemented yet, so I stole https://www.bfilipek.com/2018/07/string-view-perf-followup.html

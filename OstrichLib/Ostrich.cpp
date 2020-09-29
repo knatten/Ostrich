@@ -1,7 +1,11 @@
 module;
 
+#include <fmt/core.h>
+#include <optional>
+#include <sstream>
 #include <stdexcept>
 #include <string>
+#include <variant>
 module Ostrich;
 
 

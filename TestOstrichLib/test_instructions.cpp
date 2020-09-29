@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include <iostream>
+#include <optional>
 #include <sstream>
 #include <variant>
 
@@ -51,4 +52,25 @@ TEST_CASE("toString")
     CHECK("add  rcx rax" == Add{ rcx, rax }.toString());
     CHECK("push rax" == Push{ rax }.toString());
     CHECK("pop  rbx" == Pop{ rbx }.toString());
+    // TODO mov
+}
+
+TEST_CASE("Memory address equality")
+{
+    using enum AdditiveOperator;
+    CHECK(MemoryAddress{ rax } == MemoryAddress{ rax });
+    CHECK(MemoryAddress{ rax } != MemoryAddress{ rbx });
+
+    CHECK(MemoryAddress{ rax, plus } != MemoryAddress{ rbx, minus });
+
+    CHECK(MemoryAddress{ rax, plus, std::nullopt } != MemoryAddress{ rbx, plus, rax });
+    CHECK(MemoryAddress{ rax, plus, rbx } != MemoryAddress{ rbx, plus, rax });
+
+    CHECK(MemoryAddress{ rax, plus, rax, 0 } != MemoryAddress{ rax, plus, rax, 1 });
+
+    CHECK(MemoryAddress{ rax, plus, rax, 0, minus } != MemoryAddress{ rax, plus, rax, 1, minus });
+
+    CHECK(MemoryAddress{ rax, plus, rax, 0, minus, 0 } != MemoryAddress{ rax, plus, rax, 0, minus, 1 });
+
+    CHECK(MemoryAddress{ rbx, plus, rax, 1, minus, 1 } == MemoryAddress{ rbx, plus, rax, 1, minus, 1 });
 }
