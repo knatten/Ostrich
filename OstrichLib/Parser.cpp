@@ -93,7 +93,7 @@ namespace ostrich
     concept OperandList =
     std::forward_iterator<std::ranges::iterator_t<T>> &&std::is_same_v<std::ranges::range_value_t<T>, std::string_view>;
 
-    template <InstructionSingleRegisterOperand InstructionType, OperandList Operands>
+    template <InstructionSingleRegister InstructionType, OperandList Operands>
     InstructionType parseInstructionWithSingleRegister(const Operands &operands)
     {
         if(operands.size() != 1)

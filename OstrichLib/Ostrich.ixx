@@ -98,12 +98,12 @@ namespace ostrich
     export using Source = std::vector<Instruction>;
 
     export template <typename InstructionType>
-    concept InstructionSingleRegisterOperand =
+    concept InstructionSingleRegister=
     std::is_same_v<InstructionType, Inc> || std::is_same_v<InstructionType, Dec> ||
     std::is_same_v<InstructionType, Push> || std::is_same_v<InstructionType, Pop>;
 
     export template <typename InstructionType>
-    concept InstructionAny = InstructionSingleRegisterOperand<InstructionType> ||
+    concept InstructionAny = InstructionSingleRegister<InstructionType> ||
                              std::is_same_v<InstructionType, Add> || std::is_same_v<InstructionType, Mov>;
 
     export template <InstructionAny LhsInstruction, InstructionAny RhsInstruction>
@@ -112,7 +112,7 @@ namespace ostrich
         return false;
     }
 
-    export template <InstructionSingleRegisterOperand LhsInstruction, InstructionSingleRegisterOperand RhsInstruction>
+    export template <InstructionSingleRegister LhsInstruction, InstructionSingleRegister RhsInstruction>
     bool operator==(const LhsInstruction &lhs, const RhsInstruction &rhs)
     {
         return std::is_same_v<LhsInstruction, RhsInstruction> && lhs.registerName == rhs.registerName;
