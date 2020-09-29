@@ -98,13 +98,17 @@ namespace ostrich
     export using Source = std::vector<Instruction>;
 
     export template <typename InstructionType>
-    concept InstructionSingleRegister=
+    concept InstructionSingleRegister =
     std::is_same_v<InstructionType, Inc> || std::is_same_v<InstructionType, Dec> ||
     std::is_same_v<InstructionType, Push> || std::is_same_v<InstructionType, Pop>;
 
     export template <typename InstructionType>
-    concept InstructionAny = InstructionSingleRegister<InstructionType> ||
-                             std::is_same_v<InstructionType, Add> || std::is_same_v<InstructionType, Mov>;
+    concept InstructionSourceDestination =
+    std::is_same_v<InstructionType, Mov> || std::is_same_v<InstructionType, Add>;
+
+    export template <typename InstructionType>
+    concept InstructionAny =
+    InstructionSingleRegister<InstructionType> || InstructionSourceDestination<InstructionType>;
 
     export template <InstructionAny LhsInstruction, InstructionAny RhsInstruction>
     bool operator==(const LhsInstruction &lhs, const RhsInstruction &rhs)
@@ -118,15 +122,11 @@ namespace ostrich
         return std::is_same_v<LhsInstruction, RhsInstruction> && lhs.registerName == rhs.registerName;
     }
 
-    // TODO make concept for these and make function template instead of these two functions
-    export bool operator==(const Add &lhs, const Add &rhs)
+    export template <InstructionSourceDestination LhsInstruction, InstructionSourceDestination RhsInstruction>
+    bool operator==(const LhsInstruction &lhs, const RhsInstruction &rhs)
     {
-        return lhs.destination == rhs.destination && lhs.source == rhs.source;
-    }
-
-    export bool operator==(const Mov &lhs, const Mov &rhs)
-    {
-        return lhs.destination == rhs.destination && lhs.source == rhs.source;
+        return std::is_same_v<LhsInstruction, RhsInstruction> && lhs.source == rhs.source &&
+               lhs.destination == rhs.destination;
     }
 
     export template <InstructionAny I>

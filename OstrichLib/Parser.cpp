@@ -104,9 +104,8 @@ namespace ostrich
         return InstructionType{ parseRegister(operands[0]) };
     }
 
-    template <typename InstructionType, OperandList Operands>
-    requires(std::is_same_v<InstructionType, Mov> || std::is_same_v<InstructionType, Add>) InstructionType
-    parseInstructionWithSourceAndDestination(const Operands &operands)
+    template <InstructionSourceDestination InstructionType, OperandList Operands>
+    InstructionType parseInstructionWithSourceAndDestination(const Operands &operands)
     {
         if(operands.size() != 2)
         {
