@@ -1,5 +1,7 @@
 #include "catch.hpp"
+
 #include <optional>
+#include <sstream>
 #include <variant>
 
 import Ostrich;
@@ -33,4 +35,20 @@ TEST_CASE("MemoryAddress toShortString")
     CHECK("rax-4" == MemoryAddress{ rax, minus, std::nullopt, 4, minus, 4 }.toShortString());
     CHECK("rax+(rbx*2)" == MemoryAddress{ rax, plus, rbx, 2, minus, 0 }.toShortString());
     CHECK("rax+(rbx*2)-8" == MemoryAddress{ rax, plus, rbx, 2, minus, 8 }.toShortString());
+}
+
+TEST_CASE("Can ostream AdditiveOpertor")
+{
+    std::stringstream ss1;
+    ss1 << AdditiveOperator::plus;
+    CHECK("+" == ss1.str());
+}
+
+TEST_CASE("Can ostream MemoryAddress")
+{
+    using enum RegisterName;
+    using enum AdditiveOperator;
+    std::stringstream ss1;
+    ss1 << MemoryAddress{ rax, plus, rbx, 2, minus, 8 };
+    CHECK("rax+(rbx*2)-8" == ss1.str());
 }

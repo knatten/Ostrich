@@ -43,6 +43,13 @@ TEST_CASE("Can ostream instructions")
     CHECK("push rax" == ss2.str());
 }
 
+TEST_CASE("Can ostream RegisterName")
+{
+    std::stringstream ss1;
+    ss1 << RegisterName::rdx;
+    CHECK("rdx" == ss1.str());
+}
+
 TEST_CASE("toString")
 {
     CHECK("inc  rax" == Inc{ rax }.toString());
