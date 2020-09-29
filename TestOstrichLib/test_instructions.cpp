@@ -52,7 +52,8 @@ TEST_CASE("toString")
     CHECK("add  rcx rax" == Add{ rcx, rax }.toString());
     CHECK("push rax" == Push{ rax }.toString());
     CHECK("pop  rbx" == Pop{ rbx }.toString());
-    // TODO mov
+    CHECK("mov  rax rbx" == Mov{ rax, rbx }.toString());
+    CHECK("mov  rax 0x1" == Mov{ rax, 1 }.toString());
 }
 
 TEST_CASE("Memory address equality")
