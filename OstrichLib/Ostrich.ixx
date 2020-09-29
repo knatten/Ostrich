@@ -14,7 +14,8 @@ namespace ostrich
     // Registers
     export enum class RegisterName { rax, rbx, rcx, rdx, rsi, rdi, rbp, rsp };
     constexpr size_t registerCount{ 8 };
-    std::string toString(RegisterName registerName);
+    export std::string toString(RegisterName registerName);
+    export std::ostream &operator<<(std::ostream &os, RegisterName registerName);
 
     export struct Register
     {
@@ -25,6 +26,7 @@ namespace ostrich
     // Memory address
     export enum class AdditiveOperator { plus, minus };
     export std::string toString(AdditiveOperator additiveOperator);
+    export std::ostream &operator<<(std::ostream &os, AdditiveOperator additiveOperator);
 
     export struct MemoryAddress
     {
@@ -50,7 +52,6 @@ namespace ostrich
         os << memoryAddress.toString();
         return os;
     }
-    //TODO operator<< for more of the types here, then remove calls to toString() in many places
 
     // Instructions
     export using RegisterNameOrImmediate = std::variant<RegisterName, uint64_t>;

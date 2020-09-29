@@ -36,4 +36,10 @@ namespace ostrich
         static_assert(registerCount == 8, "Don't forget to update this!");
         throw std::runtime_error("No such register");
     }
+
+    std::ostream &operator<<(std::ostream &os, RegisterName registerName)
+    {
+        os << toString(registerName);
+        return os;
+    }
 } // namespace ostrich

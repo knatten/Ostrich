@@ -10,8 +10,6 @@ module;
 module Ostrich;
 namespace ostrich
 {
-
-
     std::string toString(AdditiveOperator additiveOperator)
     {
         switch(additiveOperator)
@@ -25,30 +23,36 @@ namespace ostrich
         throw std::runtime_error("No such additive operator");
     }
 
+    std::ostream &operator<<(std::ostream &os, AdditiveOperator additiveOperator)
+    {
+        os << toString(additiveOperator);
+        return os;
+    }
+
     std::string MemoryAddress::toString() const
     {
         std::stringstream ss;
-        ss << ostrich::toString(base);
+        ss << base;
 
-        ss << ostrich::toString(indexOperator) << "("
-           << (index ? ostrich::toString(*index) : "nullopt") << "*" << static_cast<int>(scale) << ")";
+        ss << indexOperator << "(" << (index ? ostrich::toString(*index) : "nullopt") << "*"
+           << static_cast<int>(scale) << ")";
 
-        ss << ostrich::toString(displacementOperator) << static_cast<int>(displacement);
+        ss << displacementOperator << static_cast<int>(displacement);
         return ss.str();
     }
 
     std::string MemoryAddress::toShortString() const
     {
         std::stringstream ss;
-        ss << ostrich::toString(base);
+        ss << base;
         if(index)
         {
-            ss << ostrich::toString(indexOperator) << "("
-               << (index ? ostrich::toString(*index) : "nullopt") << "*" << static_cast<int>(scale) << ")";
+            ss << indexOperator << "(" << (index ? ostrich::toString(*index) : "nullopt") << "*"
+               << static_cast<int>(scale) << ")";
         }
         if(displacement != 0)
         {
-            ss << ostrich::toString(displacementOperator) << static_cast<int>(displacement);
+            ss << displacementOperator << static_cast<int>(displacement);
         }
         return ss.str();
     }
