@@ -38,7 +38,73 @@ namespace ostrich
         return output;
     }
 
-    RegisterName parseRegister(const std::string_view &reg)
+    std::string_view skipSpace(const std::string_view &str)
+    {
+        if(str.empty())
+        {
+            return str;
+        }
+        const auto firstNonSpace = str.find_first_not_of(' ');
+        return firstNonSpace == std::string_view::npos ? str.substr(str.size()) : str.substr(firstNonSpace);
+    }
+
+    std::string_view peekOrThrow(const std::string_view &str, size_t pos, size_t count = std::string_view::npos)
+    {
+        const auto minLength = pos + (count == std::string_view::npos ? 0 : count);
+        if(minLength >= str.size())
+        {
+            throw std::runtime_error{
+                fmt::format("Unexpected end of input, tried to parse {} characters from '{}'", minLength, str)
+            };
+        }
+        return str.substr(pos, count);
+    }
+
+    std::string_view consumeOrThrow(const std::string_view &str, const std::string_view &expected)
+    {
+        if(!str.starts_with(expected))
+        {
+            throw std::runtime_error{ fmt::format("Expected '{}', found '{}'", expected, str) };
+        }
+        return str.substr(expected.size());
+    }
+
+    std::tuple<uint8_t, std::string_view> parseUint8t(const std::string_view &str)
+    {
+        std::size_t pos;
+        try
+        {
+            int i = std::stoi(std::string{ str }, &pos);
+            if(i > std::numeric_limits<uint8_t>::max())
+            {
+                throw std::runtime_error{ fmt::format("Expected a number <= {}, but got {}",
+                                                      std::numeric_limits<uint8_t>::max(), i) };
+            }
+            return { static_cast<uint8_t>(i), str.substr(pos) };
+        }
+        catch(const std::exception &e)
+        {
+            throw std::runtime_error{ fmt::format("Failed to parse integer from '{}': {}", str, e.what()) };
+        }
+    }
+
+    bool isNotWordCharacter(char c)
+    {
+        return !std::isalnum(c) && c != '_';
+    }
+
+    std::tuple<std::string_view, std::string_view> parseWord(const std::string_view &str)
+    {
+        if(str.empty())
+        {
+            throw std::runtime_error(fmt::format("Failed to parse word from '{}'", str));
+        }
+        const auto wordEnd =
+        std::distance(str.cbegin(), std::find_if(str.cbegin(), str.cend(), isNotWordCharacter));
+        return { str.substr(0, wordEnd), str.substr(wordEnd) };
+    }
+
+    RegisterName stringToRegisterName(const std::string_view &reg)
     {
         using enum RegisterName;
         if(reg == "rax")
@@ -77,53 +143,138 @@ namespace ostrich
         throw std::runtime_error(fmt::format("Unknown register name '{}'", reg));
     }
 
-    uint64_t parseImmediateValue(const std::string_view &value)
+    std::tuple<uint64_t, std::string_view> parseImmediateValue(const std::string_view &str)
     {
-        return value.starts_with("0x") ? std::stoull(std::string(value), 0, 16) :
-                                         std::stoull(std::string(value));
+        const auto [value, rest] = parseWord(str);
+        const auto result = value.starts_with("0x") ? std::stoull(std::string(value), 0, 16) :
+                                                      std::stoull(std::string(value));
+        return { result, rest };
     }
 
-    RegisterNameOrImmediate parseRegisterNameOrImmediate(const std::string_view &value)
+    std::tuple<RegisterName, std::string_view> parseRegister(const std::string_view &str)
     {
-        return std::isdigit(value[0]) ? RegisterNameOrImmediate{ parseImmediateValue(value) } :
-                                        RegisterNameOrImmediate{ parseRegister(value) };
+        if(str.size() < 3)
+        {
+            throw std::runtime_error{ fmt::format("Expected a register name, found '{}'", str) };
+        }
+        const auto [reg, rest] = parseWord(str);
+        return { stringToRegisterName(reg), rest };
     }
 
-    template <typename T>
-    concept OperandList =
-    std::forward_iterator<std::ranges::iterator_t<T>> &&std::is_same_v<std::ranges::range_value_t<T>, std::string_view>;
-
-    template <InstructionSingleRegister InstructionType, OperandList Operands>
-    InstructionType parseInstructionWithSingleRegister(const Operands &operands)
+    std::tuple<AdditiveOperator, std::string_view> parseAdditiveOperator(const std::string_view &str)
     {
-        if(operands.size() != 1)
+        if(str[0] == '+')
+        {
+            return { AdditiveOperator::plus, str.substr(1) };
+        }
+        if(str[0] == '-')
+        {
+            return { AdditiveOperator::minus, str.substr(1) };
+        }
+        throw std::runtime_error{ fmt::format("Failed to parse additive operator, found '{}'", str) };
+    }
+
+    std::tuple<MemoryAddress, std::string_view> parseMemoryAddress(const std::string_view &memoryAddress)
+    {
+        MemoryAddress memAddress;
+        std::string_view input;
+        // Base
+        std::tie(memAddress.base, input) = parseRegister(memoryAddress);
+        // Index
+        // If we have +/- and then either a register or a parenthesized expression
+        if(input.size() >= 2 && (input[0] == '+' || input[0] == '-') &&
+           (input[1] == '(' || std::isalpha(input[1])))
+        {
+            std::tie(memAddress.indexOperator, input) = parseAdditiveOperator(input);
+            const auto hasScale = input[0] == '(';
+            if(hasScale)
+            {
+                input = input.substr(1);
+            }
+            std::tie(memAddress.index, input) = parseRegister(input);
+            if(hasScale)
+            {
+                input = consumeOrThrow(input, "*");
+                std::tie(memAddress.scale, input) = parseUint8t(input);
+                input = consumeOrThrow(input, ")");
+            }
+        }
+        // Displacement
+        if(!input.empty() && (input[0] == '+' || input[0] == '-'))
+        {
+            std::tie(memAddress.displacementOperator, input) = parseAdditiveOperator(input);
+            std::tie(memAddress.displacement, input) = parseUint8t(input);
+        }
+        return { memAddress, input };
+    }
+
+    std::tuple<RegisterOrImmediateOrMemory, std::string_view>
+    parseRegisterOrImmediateOrMemory(const std::string_view &str)
+    {
+        if(str.empty())
         {
             throw std::runtime_error(
-            fmt::format("Wrong number of operands, got {}, expected {}.", operands.size(), 1));
+            "Exepected a register name, an immediate or a memory address, got empty string");
         }
-        return InstructionType{ parseRegister(operands[0]) };
+        if(std::isdigit(str[0]))
+        {
+            const auto [immediate, rest] = parseImmediateValue(str);
+            return { RegisterOrImmediateOrMemory{ immediate }, rest };
+        }
+        else if(str.starts_with("qword"))
+        {
+            const auto memAddressBegin = consumeOrThrow(str, "qword ptr [");
+            const auto [memAddress, rest] = parseMemoryAddress(memAddressBegin);
+            return { memAddress, consumeOrThrow("]", rest) };
+        }
+        else
+        {
+            const auto [reg, rest] = parseRegister(str);
+            return { RegisterOrImmediateOrMemory{ reg }, rest };
+        }
     }
 
-    template <InstructionSourceDestination InstructionType, OperandList Operands>
-    InstructionType parseInstructionWithSourceAndDestination(const Operands &operands)
+    template <InstructionSingleRegister InstructionType>
+    std::tuple<InstructionType, std::string_view>
+    parseInstructionWithSingleRegister(const std::string_view &operands)
     {
-        if(operands.size() != 2)
+        try
         {
-            throw std::runtime_error(
-            fmt::format("Wrong number of operands, got {}, expected {}.", operands.size(), 2));
+            const auto [reg, rest] = parseRegister(operands);
+            return { InstructionType{ reg }, rest };
         }
-        return InstructionType{ parseRegister(operands[0]), parseRegisterNameOrImmediate(operands[1]) };
+        catch(const std::runtime_error &)
+        {
+            throw std::runtime_error{ fmt::format("Failed to parse operands from '{}'", operands) };
+        }
     }
 
-    Instruction parseInstruction(const std::string_view &sourceLine)
+
+    template <InstructionSourceDestination InstructionType>
+    std::tuple<InstructionType, std::string_view>
+    parseInstructionWithSourceAndDestination(const std::string_view &operands)
     {
-        const auto tokens = split(sourceLine, ' ');
-        if(tokens.empty())
+        try
         {
-            throw std::runtime_error("Failed to parse empty source line!");
+            const auto [destination, sourceStr] = parseRegister(operands);
+            const auto [source, rest] = parseRegisterOrImmediateOrMemory(skipSpace(sourceStr));
+            return { InstructionType{ destination, source }, rest };
         }
-        const auto instruction = tokens[0];
-        const auto operands = tokens | std::views::drop(1);
+        catch(const std::runtime_error &)
+        {
+            throw std::runtime_error{ fmt::format("Failed to parse operands from '{}'", operands) };
+        }
+    }
+
+    std::tuple<Instruction, std::string_view> parseInstructionInternal(const std::string_view &sourceLine)
+    {
+        if(skipSpace(sourceLine).empty())
+        {
+            throw std::runtime_error("Failed to parse empty source line");
+        }
+        // TODO be more forgiving about leading spaces, multiple spaces between operators/operands etc, and test this
+        const auto [instruction, rest] = parseWord(sourceLine);
+        const auto operands = skipSpace(rest);
         if(instruction == "inc")
         {
             return parseInstructionWithSingleRegister<Inc>(operands);
@@ -155,114 +306,14 @@ namespace ostrich
         }
     };
 
-    // TODO maybe implement more things in terms of parseOut, then we can also detect if there's more stuff left etc.
-
-    std::tuple<AdditiveOperator, std::string_view> parseOutAdditiveOperator(const std::string_view &str)
+    Instruction parseInstruction(const std::string_view &sourceLine)
     {
-        if(str[0] == '+')
+        const auto [instruction, rest] = parseInstructionInternal(sourceLine);
+        if(!rest.empty())
         {
-            return { AdditiveOperator::plus, str.substr(1) };
+            throw std::runtime_error{ fmt::format("Trailing output '{}' in '{}'", rest, sourceLine) };
         }
-        if(str[0] == '-')
-        {
-            return { AdditiveOperator::minus, str.substr(1) };
-        }
-        throw std::runtime_error{ fmt::format("Failed to parse additive operator, found '{}'", str) };
-    }
-
-    std::tuple<RegisterName, std::string_view> parseOutRegister(const std::string_view &str)
-    {
-        if(str.size() < 3)
-        {
-            throw std::runtime_error{ fmt::format("Expected a register name, found '{}'", str) };
-        }
-        return { parseRegister(str.substr(0, 3)), str.substr(3) };
-    }
-
-    std::tuple<uint8_t, std::string_view> parseOutUint8t(const std::string_view &str)
-    {
-        std::size_t pos;
-        try
-        {
-            int i = std::stoi(std::string{ str }, &pos);
-            if(i > std::numeric_limits<uint8_t>::max())
-            {
-                throw std::runtime_error{ fmt::format("Expected a number <= {}, but got {}",
-                                                      std::numeric_limits<uint8_t>::max(), i) };
-            }
-            return { static_cast<uint8_t>(i), str.substr(pos) };
-        }
-        catch(const std::exception &e)
-        {
-            throw std::runtime_error{ fmt::format("Failed to parse integer from '{}': {}", str, e.what()) };
-        }
-    }
-
-    std::string_view::size_type firstOfOrEnd(const std::string_view &string, const std::string_view &search)
-    {
-        const auto firstOrEnd = string.find_first_of(search);
-        if(firstOrEnd == std::string_view::npos)
-        {
-            return string.size();
-        }
-        return firstOrEnd;
-    }
-
-    std::string_view peekOrThrow(const std::string_view &str, size_t pos, size_t count = std::string_view::npos)
-    {
-        const auto minLength = pos + (count == std::string_view::npos ? 0 : count);
-        if(minLength >= str.size())
-        {
-            throw std::runtime_error{
-                fmt::format("Unexpected end of input, tried to parse {} characters from '{}'", minLength, str)
-            };
-        }
-        return str.substr(pos, count);
-    }
-
-    std::string_view consumeOrThrow(const std::string_view &str, const std::string_view &expected)
-    {
-        if(!str.starts_with(expected))
-        {
-            throw std::runtime_error{ fmt::format("Expected '{}', found '{}'", expected, str) };
-        }
-        return str.substr(expected.size());
-    }
-
-    MemoryAddress parseMemoryAddress(const std::string_view &memoryAddress)
-    {
-        MemoryAddress memAddress;
-        std::string_view input;
-        // Base
-        std::tie(memAddress.base, input) = parseOutRegister(memoryAddress);
-        // Index
-        if(!input.empty() && !std::isdigit(peekOrThrow(input, 1)[0]))
-        {
-            std::tie(memAddress.indexOperator, input) = parseOutAdditiveOperator(input);
-            const auto hasScale = input[0] == '(';
-            if(hasScale)
-            {
-                input = input.substr(1);
-            }
-            std::tie(memAddress.index, input) = parseOutRegister(input);
-            if(hasScale)
-            {
-                input = consumeOrThrow(input, "*");
-                std::tie(memAddress.scale, input) = parseOutUint8t(input);
-                input = consumeOrThrow(input, ")");
-            }
-        }
-        // Displacement
-        if(!input.empty())
-        {
-            std::tie(memAddress.displacementOperator, input) = parseOutAdditiveOperator(input);
-            std::tie(memAddress.displacement, input) = parseOutUint8t(input);
-        }
-        if(!input.empty())
-        {
-            throw std::runtime_error{ fmt::format("Unexpected trailing characters: '{}'", input) };
-        }
-        return memAddress;
+        return instruction;
     }
 
     Source parse(const std::string_view &sourceText)

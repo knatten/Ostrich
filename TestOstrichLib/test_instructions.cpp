@@ -61,6 +61,9 @@ TEST_CASE("toString")
     CHECK("pop  rbx" == Pop{ rbx }.toString());
     CHECK("mov  rax rbx" == Mov{ rax, rbx }.toString());
     CHECK("mov  rax 0x1" == Mov{ rax, 1 }.toString());
+    using enum AdditiveOperator;
+    CHECK("mov  rsi qword ptr [rax+(rbx*2)-4]" ==
+          Mov{ rsi, MemoryAddress{ rax, plus, rbx, 2, minus, 4 } }.toString());
 }
 
 TEST_CASE("Memory address equality")

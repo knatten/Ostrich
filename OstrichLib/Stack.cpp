@@ -48,7 +48,7 @@ namespace ostrich
         }
     }
 
-    uint64_t Stack::load(uint64_t address)
+    uint64_t Stack::load(uint64_t address) const
     {
         if(address > m_beginning)
         {

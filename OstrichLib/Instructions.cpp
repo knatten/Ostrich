@@ -16,13 +16,14 @@ namespace ostrich
         return fmt::format("0x{0:X}", value);
     }
 
-    std::string toString(RegisterNameOrImmediate rori)
+    std::string toString(RegisterOrImmediateOrMemory r)
     {
         return std::visit(overloaded{
                           [](const RegisterName name) { return ostrich::toString(name); },
                           [](const uint64_t value) { return ostrich::toString(value); },
+                          [](const MemoryAddress &value) { return fmt::format("qword ptr [{0}]",value.toString()); },
                           },
-                          rori);
+                          r);
     }
 
     std::string Inc::toString() const

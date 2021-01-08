@@ -54,7 +54,7 @@ namespace ostrich
     }
 
     // Instructions
-    export using RegisterNameOrImmediate = std::variant<RegisterName, uint64_t>;
+    export using RegisterOrImmediateOrMemory = std::variant<RegisterName, uint64_t, MemoryAddress>;
 
     export struct Inc
     {
@@ -71,7 +71,7 @@ namespace ostrich
     export struct Add
     {
         RegisterName destination;
-        RegisterNameOrImmediate source;
+        RegisterOrImmediateOrMemory source;
         std::string toString() const;
     };
 
@@ -90,7 +90,7 @@ namespace ostrich
     export struct Mov
     {
         RegisterName destination;
-        RegisterNameOrImmediate source;
+        RegisterOrImmediateOrMemory source;
         std::string toString() const;
     };
 
@@ -151,7 +151,7 @@ namespace ostrich
         const std::vector<uint8_t> content() const;
         uint64_t beginning() const;
         void store(uint64_t address, uint64_t value);
-        uint64_t load(uint64_t addres);
+        uint64_t load(uint64_t address) const;
 
     private:
         uint64_t m_size;
@@ -172,10 +172,12 @@ namespace ostrich
         const std::array<Register, registerCount> registers() const;
 
         const uint64_t &registerValue(RegisterName r) const;
+        uint64_t memoryValue(const MemoryAddress &address) const;
+        uint64_t loadEffectiveAddress(const MemoryAddress &address) const;
 
     private:
         uint64_t &registerValue(RegisterName r);
-        uint64_t readValue(RegisterNameOrImmediate r);
+        uint64_t readValue(RegisterOrImmediateOrMemory r);
 
         Stack *m_stack;
         Source *m_source;
@@ -224,7 +226,7 @@ namespace ostrich
 
     // Parser
     export Instruction parseInstruction(const std::string_view &sourceLine);
-    export MemoryAddress parseMemoryAddress(const std::string_view &memoryAddress);
+    export std::tuple<MemoryAddress, std::string_view> parseMemoryAddress(const std::string_view &memoryAddress);
     export Source parse(const std::string_view &sourceText);
     export Source parse(const std::filesystem::path &sourcePath);
     // split_view is not implemented yet, so I stole https://www.bfilipek.com/2018/07/string-view-perf-followup.html

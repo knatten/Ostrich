@@ -78,13 +78,47 @@ namespace ostrich
         return const_cast<uint64_t &>(const_cast<const Cpu &>(*this).registerValue(r));
     }
 
-    uint64_t Cpu::readValue(RegisterNameOrImmediate r)
+    uint64_t Cpu::loadEffectiveAddress(const MemoryAddress &address) const
+    {
+        using enum AdditiveOperator;
+        uint64_t result = registerValue(address.base);
+        if(address.index)
+        {
+            switch(address.indexOperator)
+            {
+            case plus:
+                result += registerValue(*(address.index)) * address.scale;
+                break;
+            case minus:
+                result -= registerValue(*(address.index)) * address.scale;
+                break;
+            }
+        }
+        switch(address.displacementOperator)
+        {
+        case plus:
+            result += address.displacement;
+            break;
+        case minus:
+            result -= address.displacement;
+            break;
+        }
+        return result;
+    }
+
+    uint64_t Cpu::memoryValue(const MemoryAddress &address) const
+    {
+        return m_stack->load(loadEffectiveAddress(address));
+    }
+
+    uint64_t Cpu::readValue(RegisterOrImmediateOrMemory r)
     {
         return std::visit(overloaded{
-                   [this](const RegisterName name) { return registerValue(name); },
-                   [this](const uint64_t value) { return value; },
-                   },
-                   r);
+                          [this](const RegisterName name) { return registerValue(name); },
+                          [this](const uint64_t value) { return value; },
+                          [this](const MemoryAddress &address) { return memoryValue(address); },
+                          },
+                          r);
     }
 
 } // namespace ostrich

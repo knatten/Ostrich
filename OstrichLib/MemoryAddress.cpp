@@ -29,6 +29,7 @@ namespace ostrich
         return os;
     }
 
+    //TODO only show index and displacement if they have values
     std::string MemoryAddress::toString() const
     {
         std::stringstream ss;
@@ -41,6 +42,7 @@ namespace ostrich
         return ss.str();
     }
 
+    //TODO only show index and displacement if they have values
     std::string MemoryAddress::toShortString() const
     {
         std::stringstream ss;
