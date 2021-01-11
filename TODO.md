@@ -13,6 +13,9 @@
 - `call`, `ret` and `leave`
 
 ## Technical stuff
+- Look at splitting up the library
+  - Parser and Tokenizer not visible in official library
+  - But still need to be testable
 - Remove absolute paths from vcxprojs
 - Remove Win32 configurations
 - sln -> CMake

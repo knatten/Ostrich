@@ -226,14 +226,6 @@ namespace ostrich
 
     void swap(Vm::State &lhs, Vm::State &rhs) noexcept;
 
-    // Parser
-    export Instruction parseInstruction(const std::string_view &sourceLine);
-    export std::tuple<MemoryAddress, std::string_view> parseMemoryAddress(const std::string_view &memoryAddress);
-    export Source parse(const std::string_view &sourceText);
-    export Source parse(const std::filesystem::path &sourcePath);
-    // split_view is not implemented yet, so I stole https://www.bfilipek.com/2018/07/string-view-perf-followup.html
-    std::vector<std::string_view> split(const std::string_view &sourceLine, const char delimiter);
-
     // UI
     export class UI
     {
@@ -250,7 +242,18 @@ namespace ostrich
         Vm &m_vm;
     };
 
-    // Tokens
+    // Parser
+    export namespace parser
+    {
+        export Instruction parseInstruction(const std::string_view &sourceLine);
+        export std::tuple<MemoryAddress, std::string_view> parseMemoryAddress(const std::string_view &memoryAddress);
+        export Source parse(const std::string_view &sourceText);
+        export Source parse(const std::filesystem::path &sourcePath);
+        // split_view is not implemented yet, so I stole https://www.bfilipek.com/2018/07/string-view-perf-followup.html
+        std::vector<std::string_view> split(const std::string_view &sourceLine, const char delimiter);
+    } // namespace parser
+
+    // Tokenizer
     export namespace tokenizer
     {
         export struct Word

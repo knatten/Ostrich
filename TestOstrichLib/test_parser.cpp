@@ -11,6 +11,7 @@ import Ostrich;
 using Catch::Matchers::Contains;
 using Catch::Matchers::Equals;
 using namespace ostrich;
+using namespace ostrich::parser;
 using enum RegisterName;
 
 namespace

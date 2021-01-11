@@ -13,7 +13,7 @@ module;
 module Ostrich;
 
 
-namespace ostrich
+namespace ostrich::parser
 {
     std::vector<std::string_view> split(const std::string_view &sourceLine, const char delimiter)
     {

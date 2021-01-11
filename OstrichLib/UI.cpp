@@ -95,11 +95,11 @@ namespace ostrich
                 }
                 else if(command.starts_with("l ") || command.starts_with("load"))
                 {
-                    m_vm.load(parse(std::filesystem::path(split(command, ' ')[1])));
+                    m_vm.load(parser::parse(std::filesystem::path(parser::split(command, ' ')[1])));
                 }
                 else if(command.starts_with("'"))
                 {
-                    m_vm.execute(parseInstruction(command.substr(1)));
+                    m_vm.execute(parser::parseInstruction(command.substr(1)));
                 }
                 else if(command == "b" || command == "back")
                 {

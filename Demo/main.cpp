@@ -16,8 +16,8 @@ int main(int argc, char *argv[])
     {
 
         std::cout << argc << std::endl;
-        ostrich::Vm vm{ argc == 2 ? ostrich::parse(std::filesystem::path(argv[1])) :
-                                    ostrich::parse(std::string_view("")),
+        ostrich::Vm vm{ argc == 2 ? ostrich::parser::parse(std::filesystem::path(argv[1])) :
+                                    ostrich::parser::parse(std::string_view("")),
                         58 };
         ostrich::UI ui(120, 30, vm);
         ui.mainLoop();
