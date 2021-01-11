@@ -153,6 +153,7 @@
     <ClCompile Include="test_memory_address.cpp" />
     <ClCompile Include="test_parser.cpp" />
     <ClCompile Include="test_stack.cpp" />
+    <ClCompile Include="test_tokenizer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="catch.hpp" />

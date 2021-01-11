@@ -1,5 +1,7 @@
 module;
 
+#include <fmt/core.h>
+
 #include <array>
 #include <filesystem>
 #include <optional>
@@ -247,4 +249,80 @@ namespace ostrich
         size_t m_height;
         Vm &m_vm;
     };
+
+    // Tokens
+    export namespace tokenizer
+    {
+        export struct Word
+        {
+            static constexpr const char *tokenName = "Word";
+            std::string value;
+        };
+
+        export struct Number
+        {
+            static constexpr const char *tokenName = "Number";
+            std::string value;
+        };
+
+        export struct Comma
+        {
+            static constexpr const char *tokenName = "Comma";
+            std::string value{ "," };
+        };
+
+        export struct ArithmeticOperator
+        {
+            static constexpr const char *tokenName = "ArithmeticOperator";
+            std::string value;
+        };
+
+        export struct LeftBracket
+        {
+            static constexpr const char *tokenName = "LeftBracket";
+            std::string value{ "[" };
+        };
+
+        export struct RightBracket
+        {
+            static constexpr const char *tokenName = "RightBracket";
+            std::string value{ "]" };
+        };
+
+        export struct LeftParenthesis
+        {
+            static constexpr const char *tokenName = "LeftParenthesis";
+            std::string value{ "(" };
+        };
+
+        export struct RightParenthesis
+        {
+            static constexpr const char *tokenName = "RightParenthesis";
+            std::string value{ ")" };
+        };
+
+        export using Token =
+        std::variant<Word, Number, Comma, ArithmeticOperator, LeftBracket, RightBracket, LeftParenthesis, RightParenthesis>;
+
+        export template <typename T>
+        concept TokenAny = std::is_same_v<T, Word> || std::is_same_v<T, Number> ||
+                           std::is_same_v<T, Comma> || std::is_same_v<T, ArithmeticOperator> ||
+                           std::is_same_v<T, LeftBracket> || std::is_same_v<T, RightBracket> ||
+                           std::is_same_v<T, LeftParenthesis> || std::is_same_v<T, RightParenthesis>;
+
+        export template <TokenAny T>
+        std::ostream &operator<<(std::ostream &os, const T &w)
+        {
+            os << fmt::format("{}{{{}}}", T::tokenName, w.value);
+            return os;
+        }
+
+        export template <TokenAny LhsToken, TokenAny RhsToken>
+        bool operator==(const LhsToken &lhs, const RhsToken &rhs)
+        {
+            return std::is_same_v<LhsToken, RhsToken> && lhs.value == rhs.value;
+        }
+
+        export std::vector<Token> tokenize(std::string_view input);
+    } // namespace tokenizer
 } // namespace ostrich

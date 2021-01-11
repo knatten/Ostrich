@@ -158,6 +158,7 @@
     <ClCompile Include="Ostrich.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="Stack.cpp" />
+    <ClCompile Include="Tokenizer.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="Vm.cpp" />
   </ItemGroup>

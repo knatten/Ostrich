@@ -8,6 +8,7 @@ import Ostrich;
 
 using namespace ostrich;
 using enum RegisterName;
+
 TEST_CASE("Equality")
 {
     CHECK(Inc{ rax } == Inc{ rax });
