@@ -1,4 +1,9 @@
+## Warning
+
+This project is in early development, and I'm currently using it to try out various ideas. There are half finished features, un-used code and weird ideas on master.
+
 ## Ostrich x86_64 emulator / debugger
+
 Just a toy x86_64 emulator / debugger with time travelling and an assembly interpreter.
 
 Note that this only builds on the latest MSVC.
